@@ -1,0 +1,9 @@
+<!--#include virtual="/include/data/conexion.asp"-->
+<!--#include virtual="/include/data/catalogos.asp"-->
+<!--#include virtual="/include/security/crypto_pbkdf2.asp"-->
+<!--#include virtual="/include/security/auth.asp"-->
+<!--#include virtual="/include/security/autorizacion.asp"-->
+<!--#include virtual="/include/security/csrf.asp"-->
+<!--#include virtual="/include/security/auditoria.asp"-->
+<!--#include virtual="/include/common/errores.asp"-->
+<!--#include virtual="/include/common/validacion.asp"-->

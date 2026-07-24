@@ -1,0 +1,18 @@
+<SCRIPT LANGUAGE="VBScript" RUNAT="Server">
+
+Sub Application_OnStart
+    Application("DBConnectionString") = "Driver={MySQL ODBC 5.3 Unicode Driver};Server=<host>;Port=3306;Database=<nombre_bd>;User=<usuario>;Password=<contrasena>;Option=3;"
+    Application("NombreApp") = "ToperBTR"
+    Application("SessionTimeoutMinutos") = 20
+    Application("PBKDF2Iteraciones") = 50000
+End Sub
+
+Sub Session_OnStart
+    Session.Timeout = CInt(Application("SessionTimeoutMinutos"))
+    Session("Autenticado") = False
+End Sub
+
+Sub Session_OnEnd
+End Sub
+
+</SCRIPT>

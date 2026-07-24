@@ -1,0 +1,10 @@
+# Credenciales reales de conexion a BD - nunca se sube al repositorio.
+# Ver app/global.asa.example para la plantilla sin secretos.
+app/global.asa
+
+# Fuera de alcance de este repositorio (trunk SVN legacy, solo referencia local).
+ProyectoBTR - Codigo Java/
+
+# Basura habitual de SO/editor
+Thumbs.db
+.DS_Store

@@ -1,0 +1,12 @@
+URL de la Web:  https://toperbtr-pre.masmovil.com/
+
+Directorios del proyecto:
+
+/app		Directorio raiz de la URL. Tiene el codigo ASP
+/doc		Docuemntacion del proyecto de rectatorizacion
+/db			Ajustes en BD para 
+
+
+
+Errores de la APP en IIS:
+C:\inetpub\logs\LogFiles\W3SVC19

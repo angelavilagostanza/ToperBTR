@@ -13,7 +13,8 @@ mensajeError = Request.QueryString("error")
 </head>
 <body class="pagina-login">
 <div class="caja-login">
-    <h1><%= Application("NombreApp") %></h1>
+    <img src="/images/ToperBTR_Logo_peque_v3.png" alt="ToperBTR" class="login-logo">
+    <p class="login-subtitulo">Bloqueo de Terminales Robados</p>
     <% If mensajeError <> "" Then %>
     <p class="mensaje-error"><%= Server.HTMLEncode(mensajeError) %></p>
     <% End If %>
@@ -21,7 +22,7 @@ mensajeError = Request.QueryString("error")
         <input type="hidden" name="csrf" value="<%= Server.HTMLEncode(token) %>">
         <label for="usuario">Usuario</label>
         <input type="text" id="usuario" name="usuario" maxlength="15" required autofocus>
-        <label for="password">Contrasena</label>
+        <label for="password">Contraseña</label>
         <input type="password" id="password" name="password" maxlength="100" required>
         <button type="submit">Entrar</button>
     </form>

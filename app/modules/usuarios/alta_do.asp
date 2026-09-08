@@ -76,4 +76,5 @@ Set conn = Nothing
 
 Call EstablecerMensajeFlash("exito", "Usuario creado correctamente.")
 Response.Redirect "/modules/usuarios/listar.asp"
+Response.End
 %>

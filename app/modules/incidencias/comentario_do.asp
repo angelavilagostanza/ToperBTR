@@ -40,4 +40,5 @@ Set conn = Nothing
 
 Call EstablecerMensajeFlash("exito", "Comentario anadido correctamente.")
 Response.Redirect "/modules/incidencias/detalle.asp?cod=" & codIndIncidencia
+Response.End
 %>

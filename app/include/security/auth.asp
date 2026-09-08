@@ -115,7 +115,15 @@ Function IntentarLogin(conn, codUsuario, passwordPlano)
 
     Call RegistrarLoginCorrecto(conn, codIndiceUsuario)
 
-    If algoritmo <> "PBKDF2SHA256" Then
+    Dim debeRehash, partesHash
+    debeRehash = (algoritmo <> "PBKDF2SHA256")
+    If Not debeRehash Then
+        partesHash = Split(hashAlmacenado, "$")
+        If UBound(partesHash) >= 1 And IsNumeric(partesHash(1)) Then
+            debeRehash = (CLng(partesHash(1)) <> CLng(Application("PBKDF2Iteraciones")))
+        End If
+    End If
+    If debeRehash Then
         Call RehashPassword(conn, codIndiceUsuario, passwordPlano)
     End If
 

@@ -23,7 +23,35 @@ fDesde = Trim(Request.Form("fechaDesde"))
 fHasta = Trim(Request.Form("fechaHasta"))
 
 Dim rsSolicitudes, rsTipos, rsEstados
-Set rsSolicitudes = BuscarSolicitudes(conn, fCod, fImei, fMsisdn, fTipo, fEstado, fIdent, fNombre, fDesde, fHasta)
+'Set rsSolicitudes = BuscarSolicitudes(conn, fCod, fImei, fMsisdn, fTipo, fEstado, fIdent, fNombre, fDesde, fHasta)
+If Request.ServerVariables("REQUEST_METHOD") = "POST" Then
+
+    Set rsSolicitudes = BuscarSolicitudes( _
+        conn, _
+        fCod, _
+        fImei, _
+        fMsisdn, _
+        fTipo, _
+        fEstado, _
+        fIdent, _
+        fNombre, _
+        fDesde, _
+        fHasta)
+
+Else
+
+    Set rsSolicitudes = EjecutarConsulta( _
+        conn, _
+        "SELECT S.COD_INDICE_SOL, S.COD_SOLICITUD, T.DESCRIPCION AS TIPO, " & _
+        "S.IMEI, S.MSISDN, S.FECHA_CREACION, " & _
+        "C.NOMBRE AS NOMBRE_CLIENTE, C.PRIMER_APELLIDO, '' AS ESTADO_VIGENTE " & _
+        "FROM SOLICITUD S " & _
+        "INNER JOIN TIPO_SOLICITUD_REF T ON S.COD_TIPO_SOLICITUD = T.COD_TIPO_SOLICITUD " & _
+        "INNER JOIN CLIENTE C ON S.COD_CLIENTE = C.COD_CLIENTE " & _
+        "WHERE 1 = 0", _
+        Array())
+
+End If
 Set rsTipos = ListarTiposSolicitud(conn)
 Set rsEstados = ListarEstadosSolicitud(conn)
 %>
@@ -97,8 +125,8 @@ Set rsEstados = ListarEstadosSolicitud(conn)
             <td><%= Server.HTMLEncode(rsSolicitudes("TIPO")) %></td>
             <td><%= Server.HTMLEncode(rsSolicitudes("IMEI")) %></td>
             <td><%= Server.HTMLEncode(rsSolicitudes("MSISDN") & "") %></td>
-            <td><%= Server.HTMLEncode(rsSolicitudes("NOMBRE_CLIENTE") & "") %> <%= Server.HTMLEncode(rsSolicitudes("PRIMER_APELLIDO") & "") %></td>
-            <td><%= Server.HTMLEncode(rsSolicitudes("ESTADO_VIGENTE")) %></td>
+            <td><%= Server.HTMLEncode(rsSolicitudes("CLIENTE") & "") %></td>
+			<td><%= Server.HTMLEncode(rsSolicitudes("ESTADO_VIGENTE")) %></td>
             <td><%= rsSolicitudes("FECHA_CREACION") %></td>
         </tr>
         <% rsSolicitudes.MoveNext

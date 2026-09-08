@@ -14,6 +14,12 @@ Select Case msg
         texto = "No se ha indicado ningun fichero a descargar."
     Case "ficheronoencontrado"
         texto = "El fichero solicitado no existe o ya no esta disponible."
+    Case "imeinoyoigo"
+        texto = "El IMEI introducido no pertenece a un cliente activo de Grupo MASMOVIL. Solo se pueden bloquear IMEIs de clientes Grupo MASMOVIL."
+    Case "imeibloqueado"
+        texto = "El IMEI introducido ya se encuentra bloqueado. No es posible volver a bloquearlo."
+    Case "noencontrado"
+        texto = "La pagina solicitada no existe o ha sido eliminada."
     Case Else
         texto = "Se ha producido un error. Intentelo de nuevo mas tarde."
 End Select

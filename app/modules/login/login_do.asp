@@ -1,5 +1,10 @@
 <!--#include virtual="/include/bootstrap.asp"-->
 <%
+' Timeout extendido para permitir que los hashes legacy (50000 iter) puedan verificarse
+' y migrarse en el primer login. Eliminar una vez que todos los usuarios hayan hecho
+' su primer login con el nuevo servidor (o cuando los hashes DB se restablezcan a 200 iter).
+Server.ScriptTimeout = 360
+
 Dim csrfRecibido, codUsuario, password
 csrfRecibido = Request.Form("csrf")
 codUsuario = Trim(Request.Form("usuario"))
@@ -44,4 +49,5 @@ Session("CodOperador") = resultado("CodOperador")
 Session("AccionesPermitidas") = resultado("AccionesPermitidas")
 
 Response.Redirect "/modules/home/home.asp"
+Response.End
 %>

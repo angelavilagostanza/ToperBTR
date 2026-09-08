@@ -48,10 +48,16 @@ Function BuscarFicheros(conn, filtroNombre, filtroTipo, filtroOperador, filtroFe
         End If
         rsOp.Close
         If EsCadenaNoVacia(claveOp) Then
-            If StrComp(nombreOp, "Yoigo", vbTextCompare) = 0 Then
-                ' Regla real del legacy: los ficheros del feed EIR de Yoigo no llevan la
-                ' clave de Yoigo en el nombre, asi que buscar por "Yoigo" tambien debe
-                ' traerlos (coinciden por contener "EIR" en vez de la clave).
+            ' Yoigo / Grupo MASMOVIL / GMM son el mismo operador — cualquiera de los tres
+            ' nombres puede aparecer en OPERADOR_REF.NOMBRE segun el estado de la BD.
+            Dim esGMMOp
+            esGMMOp = (StrComp(nombreOp, "Yoigo",          vbTextCompare) = 0 Or _
+                       StrComp(nombreOp, "Grupo MASMOVIL",  vbTextCompare) = 0 Or _
+                       StrComp(nombreOp, "GMM",             vbTextCompare) = 0)
+            If esGMMOp Then
+                ' Regla real del legacy: los ficheros del feed EIR de este operador no
+                ' llevan su clave en el nombre, asi que buscar por su operador tambien
+                ' debe traerlos (coinciden por contener "EIR" en vez de la clave).
                 sql = sql & " AND (F.NOMBRE LIKE ? OR F.NOMBRE LIKE '%EIR%')"
             Else
                 sql = sql & " AND F.NOMBRE LIKE ?"

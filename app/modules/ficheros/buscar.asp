@@ -60,7 +60,7 @@ Function EtiquetaOperadorFichero(nombre)
     If mapaOperadores.Exists(clave) Then
         EtiquetaOperadorFichero = mapaOperadores(clave)
     Else
-        EtiquetaOperadorFichero = "Yoigo"
+        EtiquetaOperadorFichero = "Grupo MASMOVIL"
     End If
 End Function
 %>

@@ -57,10 +57,12 @@ If tipoClave = "E" Then
     Session("Sol_PrefillApellido1") = padre("Apellido1Cliente")
     Session("Sol_PrefillApellido2") = padre("Apellido2Cliente")
     Session("Sol_PrefillIdent") = padre("IdentCliente")
-    Session("Sol_PrefillBloqueado") = True
+    'Session("Sol_PrefillBloqueado") = True
+	Session("Sol_PrefillBloqueado") = False
 End If
 
 conn.Close
 Set conn = Nothing
 Response.Redirect "/modules/solicitudes/alta.asp"
+Response.End
 %>

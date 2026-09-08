@@ -73,6 +73,7 @@ Dim resultado
 Set resultado = CrearSolicitudCompleta(conn, tipoClave, imei, msisdnValor, numDenunciaValor, fechaRoboValor, fechaDenunciaValor, _
     identCliente, nombreCliente, apellido1Cliente, apellido2Cliente, Session("CodIndiceUsuario"), Session("CodOperador"))
 
+
 If Not resultado("Exito") Then
     conn.Close
     Set conn = Nothing
@@ -90,4 +91,5 @@ Session("Sol_TipoClave") = ""
 
 Call EstablecerMensajeFlash("exito", "Solicitud " & resultado("CodSolicitud") & " creada correctamente.")
 Response.Redirect "/modules/solicitudes/detalle.asp?cod=" & resultado("CodIndiceSol")
+Response.End
 %>

@@ -1,3 +1,4 @@
+<!--#include virtual="/dal/bloqueos_dal.asp"-->
 <%
 ' El "en curso" de una solicitud se determina igual que en el legacy confirmado
 ' (estaIMEIenSolicitudenCurso): cualquier estado que NO sea uno de los 3 terminales
@@ -34,10 +35,10 @@ Function BuscarSolicitudPadrePorImei(conn, imei)
         Set BuscarSolicitudPadrePorImei = Nothing
     Else
         Set p = Server.CreateObject("Scripting.Dictionary")
-        p("NombreCliente") = rs("NOMBRE") & ""
+        p("NombreCliente")   = rs("NOMBRE") & ""
         p("Apellido1Cliente") = rs("PRIMER_APELLIDO") & ""
         p("Apellido2Cliente") = rs("SEGUNDO_APELLIDO") & ""
-        p("IdentCliente") = rs("NUM_IDENTIFICACION") & ""
+        p("IdentCliente")    = rs("NUM_IDENTIFICACION") & ""
         Set BuscarSolicitudPadrePorImei = p
     End If
     rs.Close
@@ -68,7 +69,12 @@ End Function
 Function GenerarCodigoSolicitud(clave, codIndiceSol)
     Dim fecha
     fecha = CStr(Year(Now())) & Right("0" & Month(Now()), 2) & Right("0" & Day(Now()), 2)
-    GenerarCodigoSolicitud = UCase(clave) & fecha & Right("000000" & CStr(codIndiceSol), 6)
+    'GenerarCodigoSolicitud = UCase(clave) & fecha & Right("000000" & CStr(codIndiceSol), 6)
+    GenerarCodigoSolicitud = "Y" & _
+                             fecha & _
+                             Right("00000" & CStr(codIndiceSol), 5) & _
+                             UCase(clave)
+	
 End Function
 
 ' Alta completa: cliente + solicitud + historico de estado inicial, y si es Exclusion,
@@ -123,11 +129,17 @@ Function CrearSolicitudCompleta(conn, tipoClave, imei, msisdn, numDenuncia, fech
     End If
 
     If huboError Then
-        conn.RollbackTrans
-        On Error Goto 0
-        Set CrearSolicitudCompleta = resultado
-        Exit Function
-    End If
+
+		resultado("Mensaje") = _
+			"Err=" & Err.Number & _
+			" Desc=" & Err.Description
+
+		conn.RollbackTrans
+		On Error Goto 0
+		Set CrearSolicitudCompleta = resultado
+		Exit Function
+
+	End If
 
     conn.CommitTrans
     On Error Goto 0
@@ -142,13 +154,18 @@ End Function
 Function BuscarSolicitudes(conn, filtroCodSolicitud, filtroImei, filtroMsisdn, filtroTipo, filtroEstado, filtroIdentCliente, filtroNombreCliente, filtroFechaDesde, filtroFechaHasta)
     Dim sql, listaParams(), n
     sql = "SELECT S.COD_INDICE_SOL, S.COD_SOLICITUD, T.DESCRIPCION AS TIPO, S.IMEI, S.MSISDN, S.FECHA_CREACION, " & _
-          "C.NOMBRE AS NOMBRE_CLIENTE, C.PRIMER_APELLIDO, E.DESCRIPCION AS ESTADO_VIGENTE " & _
-          "FROM SOLICITUD S " & _
-          "INNER JOIN TIPO_SOLICITUD_REF T ON S.COD_TIPO_SOLICITUD = T.COD_TIPO_SOLICITUD " & _
-          "INNER JOIN CLIENTE C ON S.COD_CLIENTE = C.COD_CLIENTE " & _
-          "INNER JOIN HISTORICO_ESTADO_SOLICITUD H ON H.COD_INDICE_SOL = S.COD_INDICE_SOL AND H.FECHA_FIN IS NULL " & _
-          "INNER JOIN ESTADO_SOLICITUD_REF E ON H.COD_ESTADO = E.COD_ESTADO " & _
-          "WHERE 1=1"
+      "CONCAT_WS(' ', C.NOMBRE, C.PRIMER_APELLIDO, C.SEGUNDO_APELLIDO) AS CLIENTE, E.DESCRIPCION AS ESTADO_VIGENTE " & _
+      "FROM SOLICITUD S " & _
+      "INNER JOIN TIPO_SOLICITUD_REF T ON S.COD_TIPO_SOLICITUD = T.COD_TIPO_SOLICITUD " & _
+      "INNER JOIN CLIENTE C ON S.COD_CLIENTE = C.COD_CLIENTE " & _
+      "INNER JOIN HISTORICO_ESTADO_SOLICITUD H ON H.COD_INDICE_SOL = S.COD_INDICE_SOL " & _
+      "AND H.FECHA_INICIO = ( " & _
+      "SELECT MAX(H2.FECHA_INICIO) " & _
+      "FROM HISTORICO_ESTADO_SOLICITUD H2 " & _
+      "WHERE H2.COD_INDICE_SOL = S.COD_INDICE_SOL " & _
+      ") " & _
+      "INNER JOIN ESTADO_SOLICITUD_REF E ON H.COD_ESTADO = E.COD_ESTADO " & _
+      "WHERE 1=1"
     ReDim listaParams(-1)
     n = 0
 

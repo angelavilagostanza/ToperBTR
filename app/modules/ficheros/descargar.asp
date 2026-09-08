@@ -21,9 +21,9 @@ If Not EsCadenaNoVacia(nombreSolicitado) Then
     Response.End
 End If
 
-' La ruta fisica sale SIEMPRE de la fila de BD encontrada por nombre exacto, nunca se
-' construye concatenando lo que envia el usuario - evita cualquier traversal de rutas
-' aunque el nombre solicitado no sea el que se acaba usando para abrir el fichero.
+' La ruta fisica se construye siempre como Server.MapPath del directorio virtual IIS
+' "ficherosBTR" mas el nombre+extension que devuelve la BD - nunca se concatena input
+' del usuario, evitando cualquier traversal de rutas.
 Set fichero = ObtenerFicheroPorNombre(conn, nombreSolicitado)
 
 If fichero Is Nothing Then
@@ -35,11 +35,9 @@ If fichero Is Nothing Then
 End If
 
 Dim rutaCompleta, nombreDescarga
-rutaCompleta = fichero("Ruta")
-If Len(rutaCompleta) > 0 And Right(rutaCompleta, 1) <> "\" Then rutaCompleta = rutaCompleta & "\"
 nombreDescarga = fichero("NombreFichero")
 If EsCadenaNoVacia(fichero("Extension")) Then nombreDescarga = nombreDescarga & "." & fichero("Extension")
-rutaCompleta = rutaCompleta & nombreDescarga
+rutaCompleta = Server.MapPath("/ficherosBTR/" & nombreDescarga)
 
 Dim fso
 Set fso = Server.CreateObject("Scripting.FileSystemObject")

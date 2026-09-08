@@ -11,6 +11,18 @@
 ' NO esta dentro de ninguna transaccion, quedaria sin el aviso amigable automatico. Riesgo
 ' bajo dado lo simples que son estas consultas.
 
+Function CodigoAccionCacheado(nombre)
+    Dim val
+    val = Application("Accion_" & nombre)
+    If IsEmpty(val) Then CodigoAccionCacheado = -1 Else CodigoAccionCacheado = CLng(val)
+End Function
+
+Function CodigoPerfilCacheado(nombre)
+    Dim val
+    val = Application("Perfil_" & nombre)
+    If IsEmpty(val) Then CodigoPerfilCacheado = -1 Else CodigoPerfilCacheado = CLng(val)
+End Function
+
 Function CodigoPerfil(conn, nombrePerfil)
     Dim rs
     Set rs = EjecutarConsultaTx(conn, "SELECT COD_PERFIL FROM PERFIL_REF WHERE NOMBRE = ?", Array(nombrePerfil))
@@ -161,6 +173,10 @@ Function CodigoTipoBloqueo(conn, descripcion)
     rs.Close
 End Function
 
+Function ListarTiposBloqueo(conn)
+    Set ListarTiposBloqueo = EjecutarConsultaTx(conn, "SELECT COD_TIPO_BLOQUEO, DESCRIPCION FROM TIPO_BLOQUEO_REF ORDER BY DESCRIPCION", Array())
+End Function
+
 Function ListarTiposIncidencia(conn)
     Set ListarTiposIncidencia = EjecutarConsultaTx(conn, "SELECT COD_TIPO_INCIDENCIA, DESCRIPCION FROM TIPO_INCIDENCIA_REF ORDER BY DESCRIPCION", Array())
 End Function
@@ -174,5 +190,20 @@ End Function
 ' a los consumidores existentes (Incidencias, Solicitudes) que solo leen COD_OPERADOR/NOMBRE.
 Function ListarOperadores(conn)
     Set ListarOperadores = EjecutarConsultaTx(conn, "SELECT COD_OPERADOR, NOMBRE, CLAVE FROM OPERADOR_REF ORDER BY NOMBRE", Array())
+End Function
+
+Function ListarRazones(conn)
+    Set ListarRazones = EjecutarConsultaTx(conn, "SELECT COD_RAZON, DESCRIPCION FROM RAZON_LISTA_NEGRA_REF ORDER BY DESCRIPCION", Array())
+End Function
+
+Function CodigoRazon(conn, descripcion)
+    Dim rs
+    Set rs = EjecutarConsultaTx(conn, "SELECT COD_RAZON FROM RAZON_LISTA_NEGRA_REF WHERE DESCRIPCION = ?", Array(descripcion))
+    If rs.EOF Then
+        CodigoRazon = -1
+    Else
+        CodigoRazon = CLng(rs("COD_RAZON"))
+    End If
+    rs.Close
 End Function
 %>

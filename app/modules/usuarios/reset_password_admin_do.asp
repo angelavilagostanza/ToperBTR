@@ -62,4 +62,5 @@ Set conn = Nothing
 
 Call EstablecerMensajeFlash("exito", "Contrasena del usuario actualizada correctamente.")
 Response.Redirect "/modules/usuarios/listar.asp"
+Response.End
 %>

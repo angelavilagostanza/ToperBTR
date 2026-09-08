@@ -61,4 +61,5 @@ Set conn = Nothing
 
 Call EstablecerMensajeFlash("exito", "Contrasena actualizada correctamente.")
 Response.Redirect "/modules/home/home.asp"
+Response.End
 %>

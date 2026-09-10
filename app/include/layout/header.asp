@@ -29,15 +29,18 @@ End Select
     <% If Session("Autenticado") = True Then %>
     <div class="cabecera-cuenta">
         <span class="cabecera-usuario"><%= Server.HTMLEncode(Session("CodUsuario")) %></span>
-        <a href="/modules/usuarios/cambio_password.asp" class="cabecera-icono" title="Cambiar contrasena">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <div class="cabecera-cuenta-sep" aria-hidden="true"></div>
+        <a href="/modules/usuarios/cambio_password.asp" class="cabecera-icono" title="Cambiar contraseña">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="8" cy="15" r="4"/><path d="M12 11l7-7m-3 0l3 3"/>
             </svg>
+            <span class="cabecera-icono-label">Contraseña</span>
         </a>
-        <a href="/modules/login/logout.asp" class="cabecera-icono" title="Desconectar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <a href="/modules/login/logout.asp" class="cabecera-icono" title="Cerrar sesión">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
             </svg>
+            <span class="cabecera-icono-label">Salir</span>
         </a>
     </div>
     <% End If %>

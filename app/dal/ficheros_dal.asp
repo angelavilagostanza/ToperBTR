@@ -13,7 +13,62 @@
 ' nombre de fichero, no una decision de diseno nueva de ToperBTR - se preserva porque asi
 ' es como EIRControl nombra los ficheros hoy y no se puede cambiar sin tocar EIRControl
 ' (fuera de alcance).
-Function BuscarFicheros(conn, filtroNombre, filtroTipo, filtroOperador, filtroFechaDesde, filtroFechaHasta, esAdministrador)
+Function ContarFicheros(conn, filtroNombre, filtroTipo, filtroOperador, filtroFechaDesde, filtroFechaHasta, esAdministrador)
+    Dim sql, listaParams(), n, codFicheroGenerico, rs
+    codFicheroGenerico = ValorParametroEntero(conn, "COD_FICHERO_GENERICO", 0)
+
+    sql = "SELECT COUNT(*) AS N FROM FICHEROS F WHERE F.COD_FICHERO <> ?"
+    ReDim listaParams(0)
+    listaParams(0) = codFicheroGenerico
+    n = 1
+
+    If EsCadenaNoVacia(filtroNombre) Then
+        sql = sql & " AND F.NOMBRE = ?"
+        ReDim Preserve listaParams(n) : listaParams(n) = UCase(filtroNombre) : n = n + 1
+    End If
+    If IsDate(filtroFechaDesde) Then
+        sql = sql & " AND F.FECHA_CREACION >= ?"
+        ReDim Preserve listaParams(n) : listaParams(n) = CDate(filtroFechaDesde) : n = n + 1
+    End If
+    If IsDate(filtroFechaHasta) Then
+        sql = sql & " AND F.FECHA_CREACION < ?"
+        ReDim Preserve listaParams(n) : listaParams(n) = DateAdd("d", 1, CDate(filtroFechaHasta)) : n = n + 1
+    End If
+    If EsCadenaNoVacia(filtroOperador) And filtroOperador <> "-1" And IsNumeric(filtroOperador) Then
+        Dim rsOpC, claveOpC, nombreOpC
+        claveOpC = ""
+        Set rsOpC = EjecutarConsultaTx(conn, "SELECT NOMBRE, CLAVE FROM OPERADOR_REF WHERE COD_OPERADOR = ?", Array(CLng(filtroOperador)))
+        If Not rsOpC.EOF Then
+            nombreOpC = rsOpC("NOMBRE") & ""
+            claveOpC  = rsOpC("CLAVE") & ""
+        End If
+        rsOpC.Close
+        If EsCadenaNoVacia(claveOpC) Then
+            Dim esGMMC
+            esGMMC = (StrComp(nombreOpC, "Yoigo",         vbTextCompare) = 0 Or _
+                      StrComp(nombreOpC, "Grupo MASMOVIL", vbTextCompare) = 0 Or _
+                      StrComp(nombreOpC, "GMM",            vbTextCompare) = 0)
+            If esGMMC Then
+                sql = sql & " AND (F.NOMBRE LIKE ? OR F.NOMBRE LIKE '%EIR%')"
+            Else
+                sql = sql & " AND F.NOMBRE LIKE ?"
+            End If
+            ReDim Preserve listaParams(n) : listaParams(n) = "%" & claveOpC & "%" : n = n + 1
+        End If
+    End If
+    If Not esAdministrador Then sql = sql & " AND LENGTH(F.NOMBRE) <> 11"
+    Select Case UCase(filtroTipo & "")
+        Case "D" : sql = sql & " AND LENGTH(F.NOMBRE) = 9"
+        Case "C" : sql = sql & " AND LENGTH(F.NOMBRE) = 7"
+        Case "E" : sql = sql & " AND LENGTH(F.NOMBRE) = 11"
+    End Select
+
+    Set rs = EjecutarConsulta(conn, sql, listaParams)
+    ContarFicheros = CLng(rs("N"))
+    rs.Close
+End Function
+
+Function BuscarFicheros(conn, filtroNombre, filtroTipo, filtroOperador, filtroFechaDesde, filtroFechaHasta, esAdministrador, limite, offset)
     Dim sql, listaParams(), n, codFicheroGenerico
     codFicheroGenerico = ValorParametroEntero(conn, "COD_FICHERO_GENERICO", 0)
 
@@ -81,7 +136,7 @@ Function BuscarFicheros(conn, filtroNombre, filtroTipo, filtroOperador, filtroFe
             sql = sql & " AND LENGTH(F.NOMBRE) = 11"
     End Select
 
-    sql = sql & " ORDER BY F.FECHA_CREACION DESC"
+    sql = sql & " ORDER BY F.FECHA_CREACION DESC LIMIT " & CLng(offset) & ", " & CLng(limite)
     Set BuscarFicheros = EjecutarConsulta(conn, sql, listaParams)
 End Function
 

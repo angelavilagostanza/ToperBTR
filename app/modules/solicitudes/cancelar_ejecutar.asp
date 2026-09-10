@@ -23,9 +23,26 @@ End If
 
 Dim listaIdsStr, listaIdsLng, i
 listaIdsStr = Split(seleccionCsv, ",")
+
+' Segunda validacion (defensa en profundidad): cada ID debe ser numerico y
+' cancelable. cancelar_confirmar.asp ya lo valido, pero un POST directo o una
+' solicitud que cambio de estado entre pasos podria llegar aqui igualmente.
 ReDim listaIdsLng(UBound(listaIdsStr))
 For i = 0 To UBound(listaIdsStr)
-    listaIdsLng(i) = CLng(listaIdsStr(i))
+    Dim rawId
+    rawId = Trim(listaIdsStr(i))
+    If Not IsNumeric(rawId) Then
+        conn.Close
+        Response.Redirect "/errors/error.asp?msg=solicitud_invalida"
+        Response.End
+    End If
+    listaIdsLng(i) = CLng(rawId)
+    If Not EsSolicitudCancelable(conn, listaIdsLng(i)) Then
+        conn.Close
+        Call EstablecerMensajeFlash("error", "Una o mas solicitudes ya no pueden cancelarse. Revisa el estado actual y vuelve a intentarlo.")
+        Response.Redirect "/modules/solicitudes/consulta.asp"
+        Response.End
+    End If
 Next
 
 Dim codCancelada

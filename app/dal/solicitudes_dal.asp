@@ -151,7 +151,7 @@ Function CrearSolicitudCompleta(conn, tipoClave, imei, msisdn, numDenuncia, fech
     Set CrearSolicitudCompleta = resultado
 End Function
 
-Function BuscarSolicitudes(conn, filtroCodSolicitud, filtroImei, filtroMsisdn, filtroTipo, filtroEstado, filtroIdentCliente, filtroNombreCliente, filtroFechaDesde, filtroFechaHasta)
+Function BuscarSolicitudes(conn, filtroCodSolicitud, filtroImei, filtroMsisdn, filtroTipo, filtroEstado, filtroIdentCliente, filtroNombreCliente, filtroFechaDesde, filtroFechaHasta, limite, offset)
     Dim sql, listaParams(), n
     sql = "SELECT S.COD_INDICE_SOL, S.COD_SOLICITUD, T.DESCRIPCION AS TIPO, S.IMEI, S.MSISDN, S.FECHA_CREACION, " & _
       "CONCAT_WS(' ', C.NOMBRE, C.PRIMER_APELLIDO, C.SEGUNDO_APELLIDO) AS CLIENTE, E.DESCRIPCION AS ESTADO_VIGENTE " & _
@@ -206,8 +206,67 @@ Function BuscarSolicitudes(conn, filtroCodSolicitud, filtroImei, filtroMsisdn, f
         ReDim Preserve listaParams(n) : listaParams(n) = DateAdd("d", 1, CDate(filtroFechaHasta)) : n = n + 1
     End If
 
-    sql = sql & " ORDER BY S.FECHA_CREACION DESC"
+    sql = sql & " ORDER BY S.FECHA_CREACION DESC LIMIT " & CLng(offset) & ", " & CLng(limite)
     Set BuscarSolicitudes = EjecutarConsulta(conn, sql, listaParams)
+End Function
+
+Function ContarSolicitudes(conn, filtroCodSolicitud, filtroImei, filtroMsisdn, filtroTipo, filtroEstado, filtroIdentCliente, filtroNombreCliente, filtroFechaDesde, filtroFechaHasta)
+    Dim sql, listaParams(), n, rs
+    sql = "SELECT COUNT(*) AS N " & _
+      "FROM SOLICITUD S " & _
+      "INNER JOIN TIPO_SOLICITUD_REF T ON S.COD_TIPO_SOLICITUD = T.COD_TIPO_SOLICITUD " & _
+      "INNER JOIN CLIENTE C ON S.COD_CLIENTE = C.COD_CLIENTE " & _
+      "INNER JOIN HISTORICO_ESTADO_SOLICITUD H ON H.COD_INDICE_SOL = S.COD_INDICE_SOL " & _
+      "AND H.FECHA_INICIO = ( " & _
+      "SELECT MAX(H2.FECHA_INICIO) " & _
+      "FROM HISTORICO_ESTADO_SOLICITUD H2 " & _
+      "WHERE H2.COD_INDICE_SOL = S.COD_INDICE_SOL " & _
+      ") " & _
+      "INNER JOIN ESTADO_SOLICITUD_REF E ON H.COD_ESTADO = E.COD_ESTADO " & _
+      "WHERE 1=1"
+    ReDim listaParams(-1)
+    n = 0
+
+    If EsCadenaNoVacia(filtroCodSolicitud) Then
+        sql = sql & " AND S.COD_SOLICITUD LIKE ?"
+        ReDim Preserve listaParams(n) : listaParams(n) = "%" & filtroCodSolicitud & "%" : n = n + 1
+    End If
+    If EsCadenaNoVacia(filtroImei) Then
+        sql = sql & " AND S.IMEI LIKE ?"
+        ReDim Preserve listaParams(n) : listaParams(n) = "%" & filtroImei & "%" : n = n + 1
+    End If
+    If EsCadenaNoVacia(filtroMsisdn) Then
+        sql = sql & " AND S.MSISDN LIKE ?"
+        ReDim Preserve listaParams(n) : listaParams(n) = "%" & filtroMsisdn & "%" : n = n + 1
+    End If
+    If EsCadenaNoVacia(filtroTipo) And filtroTipo <> "-1" And IsNumeric(filtroTipo) Then
+        sql = sql & " AND S.COD_TIPO_SOLICITUD = ?"
+        ReDim Preserve listaParams(n) : listaParams(n) = CLng(filtroTipo) : n = n + 1
+    End If
+    If EsCadenaNoVacia(filtroEstado) And filtroEstado <> "-1" And IsNumeric(filtroEstado) Then
+        sql = sql & " AND H.COD_ESTADO = ?"
+        ReDim Preserve listaParams(n) : listaParams(n) = CLng(filtroEstado) : n = n + 1
+    End If
+    If EsCadenaNoVacia(filtroIdentCliente) Then
+        sql = sql & " AND C.NUM_IDENTIFICACION LIKE ?"
+        ReDim Preserve listaParams(n) : listaParams(n) = "%" & filtroIdentCliente & "%" : n = n + 1
+    End If
+    If EsCadenaNoVacia(filtroNombreCliente) Then
+        sql = sql & " AND C.NOMBRE LIKE ?"
+        ReDim Preserve listaParams(n) : listaParams(n) = "%" & filtroNombreCliente & "%" : n = n + 1
+    End If
+    If IsDate(filtroFechaDesde) Then
+        sql = sql & " AND S.FECHA_CREACION >= ?"
+        ReDim Preserve listaParams(n) : listaParams(n) = CDate(filtroFechaDesde) : n = n + 1
+    End If
+    If IsDate(filtroFechaHasta) Then
+        sql = sql & " AND S.FECHA_CREACION < ?"
+        ReDim Preserve listaParams(n) : listaParams(n) = DateAdd("d", 1, CDate(filtroFechaHasta)) : n = n + 1
+    End If
+
+    Set rs = EjecutarConsulta(conn, sql, listaParams)
+    ContarSolicitudes = CLng(rs("N"))
+    rs.Close
 End Function
 
 Function ObtenerSolicitudPorIndice(conn, codIndiceSol)

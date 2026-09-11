@@ -18,7 +18,7 @@ Call RequiereSesion()
 <main class="contenido">
     <div class="home-intro">
         <h2>Bienvenido, <%= Server.HTMLEncode(Session("Nombre")) %></h2>
-        <p>BTR es una aplicación para gestionar el Bloqueo de Terminales Robados.</p>
+        <p><b>BTR</b> es una aplicación para gestionar el Bloqueo de Terminales Robados.</br>Una terminal robada se bloquea añadiendo su IMEI al EIR (Equipment Identity Register) de la Red de MASMOVIL y/ó de todos los operadores nacionales.</p>
     </div>
 
     <div class="indice-funcionalidades">
@@ -30,7 +30,7 @@ Call RequiereSesion()
             </svg>
             <span class="indice-card-cuerpo">
                 <span class="indice-card-titulo">Solicitudes</span>
-                <span class="indice-card-desc">Consulta y gestión de solicitudes de Inclusión y Exclusión de terminales en la base.</span>
+                <span class="indice-card-desc">Consulta y gestión de solicitudes de Inclusión y Exclusión de terminales en la base. Cancelación de solicitudes que no esten terminadas (Rechazada, Cancelada y Actualizada).</span>
             </span>
         </a>
         <% End If %>

@@ -76,7 +76,7 @@ End Function
 <main class="contenido">
     <h2>Incidencias</h2>
 
-    <form method="get" action="/modules/incidencias/buscar.asp" class="formulario-busqueda">
+    <form method="get" action="/modules/incidencias/buscar.asp" class="formulario-busqueda" onsubmit="return validarFiltros(this)">
         <input type="hidden" name="buscado" value="1">
         <div class="formulario-fila">
             <label>Codigo <input type="text" name="codIncidencia" value="<%= Server.HTMLEncode(fCod) %>"></label>
@@ -121,10 +121,23 @@ End Function
             <label>Creacion desde <input type="date" name="fechaDesde" value="<%= Server.HTMLEncode(fDesde) %>"></label>
             <label>Creacion hasta <input type="date" name="fechaHasta" value="<%= Server.HTMLEncode(fHasta) %>"></label>
         </div>
+        <div id="aviso-filtro" class="flash-info" hidden style="margin-top:.5rem">
+            Indica al menos un criterio de b&uacute;squeda. Puedes usar <strong>Creaci&oacute;n desde</strong> para listar incidencias por fecha.
+        </div>
         <div class="formulario-fila">
             <button type="submit">Filtrar</button>
         </div>
     </form>
+    <script>
+    function validarFiltros(f) {
+        var textos = ['codIncidencia','codSolicitud','nombreFichero','fechaDesde','fechaHasta'];
+        for (var i = 0; i < textos.length; i++) {
+            if (f[textos[i]].value.trim() !== '') { document.getElementById('aviso-filtro').hidden = true; return true; }
+        }
+        document.getElementById('aviso-filtro').hidden = false;
+        return false;
+    }
+    </script>
 
     <% If buscado Then %>
 

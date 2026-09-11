@@ -446,3 +446,62 @@ body {
 .indice-card-titulo { font-weight: 600; font-size: .92rem; }
 
 .indice-card-desc { font-size: .82rem; color: #666; line-height: 1.45; }
+
+/* --- Navegación de módulo (tabs con subrayado) --- */
+
+.modulo-nav {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 2px solid var(--gris-borde);
+    margin-bottom: 1.25rem;
+}
+
+.modulo-nav .modulo-nav-item {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .5rem 1.05rem;
+    font-size: .875rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    color: #888;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    border-bottom: 2.5px solid transparent;
+    margin-bottom: -2px;
+    transition: color .14s, border-color .14s;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+.modulo-nav .modulo-nav-item:hover {
+    color: var(--naranja-oscuro);
+    border-bottom-color: rgba(255,153,51,.4);
+    background: transparent;
+    text-decoration: none;
+}
+
+.modulo-nav .modulo-nav-item.activo {
+    color: var(--naranja-oscuro);
+    font-weight: 700;
+    border-bottom-color: var(--naranja);
+    cursor: default;
+    pointer-events: none;
+    background: transparent;
+}
+
+.modulo-nav .modulo-nav-cancelar {
+    color: #cc2222;
+    margin-left: 1.75rem;
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--gris-borde);
+}
+
+.modulo-nav .modulo-nav-cancelar:hover {
+    color: #a81818;
+    border-bottom-color: #cc2222;
+    background: transparent;
+}

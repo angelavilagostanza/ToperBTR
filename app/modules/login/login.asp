@@ -10,6 +10,7 @@ mensajeError = Request.QueryString("error")
 <meta charset="utf-8">
 <title>ToperBTR - Acceso</title>
 <link rel="stylesheet" href="/assets/css/site.css">
+<link rel="icon" href="/images/ToperBTR_favicon.ico" type="image/x-icon">
 </head>
 <body class="pagina-login">
 <div class="caja-login">

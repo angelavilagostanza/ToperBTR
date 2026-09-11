@@ -37,6 +37,7 @@ errorMsg = Request.QueryString("error")
 <meta charset="utf-8">
 <title>ToperBTR - Incidencia <%= Server.HTMLEncode(inc("CodIncidencia")) %></title>
 <link rel="stylesheet" href="/assets/css/site.css">
+<link rel="icon" href="/images/ToperBTR_favicon.ico" type="image/x-icon">
 </head>
 <body>
 <div class="app-shell">

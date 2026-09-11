@@ -30,6 +30,7 @@ End Select
 <meta charset="utf-8">
 <title>ToperBTR - Aviso</title>
 <link rel="stylesheet" href="/assets/css/site.css">
+<link rel="icon" href="/images/ToperBTR_favicon.ico" type="image/x-icon">
 </head>
 <body class="pagina-error">
 <div class="caja-error">

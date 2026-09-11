@@ -26,6 +26,7 @@ Set rsEstados = ListarEstadosUsuario(conn)
 <meta charset="utf-8">
 <title>ToperBTR - Usuarios</title>
 <link rel="stylesheet" href="/assets/css/site.css">
+<link rel="icon" href="/images/ToperBTR_favicon.ico" type="image/x-icon">
 </head>
 <body>
 <div class="app-shell">

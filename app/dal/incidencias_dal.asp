@@ -7,7 +7,7 @@
 ' el WHERE), asi cada incidencia solo casa con la tabla que le corresponde de verdad.
 Function BuscarIncidencias(conn, filtroCodIncidencia, filtroTipo, filtroEstado, filtroOperador, filtroCodSolicitud, filtroNombreFichero, filtroFechaDesde, filtroFechaHasta, limite, offset)
     Dim sql, listaParams(), n
-    sql = "SELECT I.COD_IND_INCIDENCIA, I.COD_INCIDENCIA, I.FECHA_CREACION, I.FECHA_RESOLUCION, " & _
+    sql = "SELECT CAST(I.COD_IND_INCIDENCIA AS CHAR) AS COD_IND_INCIDENCIA, I.COD_INCIDENCIA, I.FECHA_CREACION, I.FECHA_RESOLUCION, " & _
           "TI.DESCRIPCION AS TIPO_INCIDENCIA, OP.NOMBRE AS OPERADOR, E.DESCRIPCION AS ESTADO, " & _
           "O.TIPO_OBJETO, O.COD_OBJETO, S.COD_SOLICITUD, F.NOMBRE AS NOMBRE_FICHERO " & _
           "FROM INCIDENCIA I " & _
@@ -115,9 +115,9 @@ End Function
 Function ObtenerIncidenciaPorIndice(conn, codIndIncidencia)
     Dim rs, inc
     Set rs = EjecutarConsulta(conn, _
-        "SELECT I.COD_IND_INCIDENCIA, I.COD_INCIDENCIA, I.OTROS_DATOS, I.CAUSA, I.FECHA_CREACION, I.FECHA_RESOLUCION, " & _
+        "SELECT CAST(I.COD_IND_INCIDENCIA AS CHAR) AS COD_IND_INCIDENCIA, I.COD_INCIDENCIA, I.OTROS_DATOS, I.CAUSA, I.FECHA_CREACION, I.FECHA_RESOLUCION, " & _
         "TI.DESCRIPCION AS TIPO_INCIDENCIA, TI.CATEGORIA, OP.NOMBRE AS OPERADOR, " & _
-        "O.TIPO_OBJETO, O.COD_OBJETO, S.COD_SOLICITUD, F.NOMBRE AS NOMBRE_FICHERO " & _
+        "O.TIPO_OBJETO, CAST(O.COD_OBJETO AS CHAR) AS COD_OBJETO, S.COD_SOLICITUD, F.NOMBRE AS NOMBRE_FICHERO " & _
         "FROM INCIDENCIA I " & _
         "INNER JOIN TIPO_INCIDENCIA_REF TI ON I.COD_TIPO_INCIDENCIA = TI.COD_TIPO_INCIDENCIA " & _
         "INNER JOIN OPERADOR_REF OP ON I.COD_OPERADOR = OP.COD_OPERADOR " & _

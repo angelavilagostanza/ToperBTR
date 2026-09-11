@@ -416,7 +416,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: .5rem;
-    max-width: 860px;
+    max-width: 900px;
 }
 
 .indice-card {

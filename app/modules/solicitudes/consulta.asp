@@ -247,7 +247,7 @@ End Function
             <% End If %>
         </td>
         <% End If %>
-        <td><a href="/modules/solicitudes/detalle.asp?cod=<%= aIndice(fi) %>"><%= aIndice(fi) %> - <%= Server.HTMLEncode(aCodSol(fi)) %></a></td>
+        <td><a href="/modules/solicitudes/detalle.asp?cod=<%= aIndice(fi) %>"><%= Server.HTMLEncode(aCodSol(fi)) %></a></td>
         <td><%= Server.HTMLEncode(aTipo(fi)) %></td>
         <td><%= Server.HTMLEncode(aImei(fi)) %></td>
         <td><%= Server.HTMLEncode(aMsisdn(fi)) %></td>

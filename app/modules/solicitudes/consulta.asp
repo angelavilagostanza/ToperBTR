@@ -95,7 +95,7 @@ If buscado Then
         ReDim Preserve aCliente(nFilas)
         ReDim Preserve aEstado(nFilas)
         ReDim Preserve aFecha(nFilas)
-        aIndice(nFilas)  = CLng(rsSol("COD_INDICE_SOL"))
+        aIndice(nFilas)  = CLng(rsSol("INDICE_SOLICITUD") & "")
         aCodSol(nFilas)  = rsSol("COD_SOLICITUD") & ""
         aTipo(nFilas)    = rsSol("TIPO") & ""
         aImei(nFilas)    = rsSol("IMEI") & ""
@@ -166,6 +166,8 @@ End Function
             <label>Codigo <input type="text" name="codSolicitud" value="<%= Server.HTMLEncode(fCod) %>"></label>
             <label>IMEI <input type="text" name="imei" value="<%= Server.HTMLEncode(fImei) %>"></label>
             <label>MSISDN <input type="text" name="msisdn" value="<%= Server.HTMLEncode(fMsisdn) %>"></label>
+            <label>NIF/CIF cliente <input type="text" name="identCliente" value="<%= Server.HTMLEncode(fIdent) %>"></label>
+            <label>Nombre cliente <input type="text" name="nombreCliente" value="<%= Server.HTMLEncode(fNombre) %>"></label>            
             <label>Tipo
                 <select name="tipo">
                     <option value="-1">Todos</option>
@@ -193,8 +195,6 @@ End Function
             </label>
         </div>
         <div class="formulario-fila">
-            <label>NIF/CIF cliente <input type="text" name="identCliente" value="<%= Server.HTMLEncode(fIdent) %>"></label>
-            <label>Nombre cliente <input type="text" name="nombreCliente" value="<%= Server.HTMLEncode(fNombre) %>"></label>
             <label>Creacion desde <input type="date" name="fechaDesde" value="<%= Server.HTMLEncode(fDesde) %>"></label>
             <label>Creacion hasta <input type="date" name="fechaHasta" value="<%= Server.HTMLEncode(fHasta) %>"></label>
         </div>

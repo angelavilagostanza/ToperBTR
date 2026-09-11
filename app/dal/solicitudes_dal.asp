@@ -153,7 +153,7 @@ End Function
 
 Function BuscarSolicitudes(conn, filtroCodSolicitud, filtroImei, filtroMsisdn, filtroTipo, filtroEstado, filtroIdentCliente, filtroNombreCliente, filtroFechaDesde, filtroFechaHasta, limite, offset)
     Dim sql, listaParams(), n
-    sql = "SELECT S.COD_INDICE_SOL, S.COD_SOLICITUD, T.DESCRIPCION AS TIPO, S.IMEI, S.MSISDN, S.FECHA_CREACION, " & _
+    sql = "SELECT CAST(S.COD_INDICE_SOL AS CHAR) AS INDICE_SOLICITUD, S.COD_SOLICITUD, T.DESCRIPCION AS TIPO, S.IMEI, S.MSISDN, S.FECHA_CREACION, " & _
       "CONCAT_WS(' ', C.NOMBRE, C.PRIMER_APELLIDO, C.SEGUNDO_APELLIDO) AS CLIENTE, E.DESCRIPCION AS ESTADO_VIGENTE " & _
       "FROM SOLICITUD S " & _
       "INNER JOIN TIPO_SOLICITUD_REF T ON S.COD_TIPO_SOLICITUD = T.COD_TIPO_SOLICITUD " & _

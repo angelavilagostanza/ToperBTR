@@ -168,8 +168,10 @@ Function ObtenerComentarios(conn, codIndIncidencia)
 End Function
 
 Sub InsertarComentario(conn, codIndIncidencia, codIndiceUsuario, comentario)
+    ' cod_indice_comentario no tiene AUTO_INCREMENT en BD — se genera con MAX+1
     Call EjecutarNonQuery(conn, _
-        "INSERT INTO COMENTARIO_INCIDENCIA (COD_INDICE_USUARIO, FECHA_CREACION, COMENTARIO, COD_IND_INCIDENCIA) VALUES (?, NOW(), ?, ?)", _
+        "INSERT INTO COMENTARIO_INCIDENCIA (cod_indice_comentario, COD_INDICE_USUARIO, FECHA_CREACION, COMENTARIO, COD_IND_INCIDENCIA)" & _
+        " SELECT COALESCE(MAX(cod_indice_comentario), 0) + 1, ?, NOW(), ?, ? FROM COMENTARIO_INCIDENCIA", _
         Array(codIndiceUsuario, comentario, codIndIncidencia))
 End Sub
 %>

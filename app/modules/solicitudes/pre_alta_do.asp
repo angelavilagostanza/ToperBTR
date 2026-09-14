@@ -36,6 +36,16 @@ If ImeiEnCurso(conn, imei) Then
     Response.End
 End If
 
+If ImeiEnListaNegra(conn, imei) Then
+    conn.Close
+    Set conn = Nothing
+
+    Response.Redirect "/modules/solicitudes/pre_alta.asp?error=" & _
+        Server.URLEncode("El IMEI ya se encuentra en lista negra.")
+
+    Response.End
+End If
+
 Session("Sol_Imei") = imei
 Session("Sol_TipoClave") = tipoClave
 Session("Sol_PrefillNombre") = ""

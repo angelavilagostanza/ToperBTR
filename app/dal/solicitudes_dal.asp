@@ -19,6 +19,17 @@ Function ImeiEnCurso(conn, imei)
     rs.Close
 End Function
 
+' Si el IMEI ya esta en listaNegra no es necesario crear una nueva solicitud
+Function ImeiEnListaNegra(conn, imei)
+    Dim rs
+    Set rs = EjecutarConsulta(conn, _
+        "SELECT 1 FROM LISTA_NEGRA WHERE IMEI = ?", _
+        Array(imei))
+    ImeiEnListaNegra = Not rs.EOF
+    rs.Close
+End Function
+
+
 ' Para una Exclusion, busca la solicitud de Inclusion original sobre el mismo IMEI
 ' (resuelta siempre por CLAVE de catalogo, nunca con el literal hardcodeado que tenia
 ' el legacy en un punto de su codigo). Devuelve un Dictionary con los datos del cliente

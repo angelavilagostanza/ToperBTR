@@ -12,7 +12,7 @@ accion = Request.Form("accion")
 </head>
 <body>
 
-<h2>Diagnostico PKs sin AUTO_INCREMENT</h2>
+<h2>Diagnostico PKs sin AUTO_INCREMENT (ronda 2)</h2>
 
 <form method="post">
     <input type="submit" name="accion" value="Probar">
@@ -32,15 +32,11 @@ If accion <> "" Then
         Response.End
     End If
 
-    Dim tablas(7)
-    tablas(0) = "COMENTARIO_INCIDENCIA"
-    tablas(1) = "AUDITORIA_ACCION"
-    tablas(2) = "SOLICITUD"
-    tablas(3) = "HISTORICO_ESTADO_SOLICITUD"
-    tablas(4) = "HISTORICO_ESTADO_INCIDENCIA"
-    tablas(5) = "BLOQUEOS"
-    tablas(6) = "USUARIOS"
-    tablas(7) = "INCIDENCIA"
+    Dim tablas(3)
+    tablas(0) = "HISTORICO_BLOQUEO_DIRECTO"
+    tablas(1) = "LISTA_NEGRA"
+    tablas(2) = "CLIENTE"
+    tablas(3) = "HISTORICO_PASSWORD"
 
     Dim i, rs, pkCols, extraCols
     For i = 0 To UBound(tablas)
@@ -57,7 +53,7 @@ If accion <> "" Then
                 Dim isKey
                 isKey = (rs(3) & "" = "PRI")
                 If isKey Then
-                    pkCols = pkCols & rs(0) & " "
+                    pkCols = pkCols & (rs(0) & "") & " "
                     extraCols = extraCols & (rs(5) & "")
                 End If
                 Dim rowColor
@@ -77,10 +73,18 @@ If accion <> "" Then
             Loop
             rs.Close
             Response.Write "</table>"
-            If pkCols <> "" And InStr(LCase(extraCols), "auto_increment") = 0 Then
-                Response.Write "<p style='color:red'><b>PROBLEMA:</b> PK [" & Trim(pkCols) & "] sin AUTO_INCREMENT &mdash; ALTER TABLE " & tablas(i) & " MODIFY " & Trim(pkCols) & " INT NOT NULL AUTO_INCREMENT;</p>"
+
+            Dim numPkCols
+            numPkCols = Len(Trim(pkCols)) - Len(Replace(Trim(pkCols), " ", ""))
+
+            If pkCols <> "" And InStr(LCase(extraCols), "auto_increment") = 0 And numPkCols = 0 Then
+                ' PK de una sola columna sin AUTO_INCREMENT
+                Response.Write "<p style='color:red'><b>PROBLEMA:</b> PK [" & Trim(pkCols) & "] sin AUTO_INCREMENT</p>"
+            ElseIf pkCols <> "" And numPkCols > 0 Then
+                ' PK compuesta — es una clave natural, no necesita AUTO_INCREMENT
+                Response.Write "<p style='color:#886600'>PK compuesta (clave natural): [" & Trim(pkCols) & "] — revisar que el INSERT proporciona todos los campos PK</p>"
             Else
-                Response.Write "<p style='color:green'>PK OK (AUTO_INCREMENT o sin PK simple)</p>"
+                Response.Write "<p style='color:green'>PK OK</p>"
             End If
         End If
         Err.Clear

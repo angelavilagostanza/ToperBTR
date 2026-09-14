@@ -132,6 +132,13 @@ SELECT 'COL_USUARIOS_ALGORITMO_PASSWORD',
        CASE WHEN COUNT(*) > 0 THEN 'EXISTE (script 001 ya aplicado)' ELSE 'NO_EXISTE (pendiente, ok)' END
 FROM information_schema.COLUMNS
 WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'usuarios' AND COLUMN_NAME = 'algoritmo_password'
+
+UNION ALL
+
+SELECT 'COL_HISTORICO_PASSWORD_ALGORITMO_PASSWORD',
+       CASE WHEN COUNT(*) > 0 THEN 'EXISTE (script 002 ya aplicado)' ELSE 'NO_EXISTE (pendiente, ok)' END
+FROM information_schema.COLUMNS
+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'historico_password' AND COLUMN_NAME = 'algoritmo_password'
 ;
 
 -- ============================================================
@@ -218,7 +225,28 @@ UNION ALL
 SELECT 'AI_HISTORICO_BLOQUEO_DIRECTO',
        CASE WHEN EXTRA LIKE '%auto_increment%' THEN 'OK' ELSE 'PENDIENTE (script 003 lo activa)' END
 FROM information_schema.COLUMNS
-WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'historico_bloqueo_directo' AND COLUMN_NAME = 'cod_historico'
+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'historico_bloqueo_directo' AND COLUMN_NAME = 'cod_hist_bloq_dir'
+
+UNION ALL
+
+SELECT 'AI_CLIENTE',
+       CASE WHEN EXTRA LIKE '%auto_increment%' THEN 'OK' ELSE 'PENDIENTE (script 003 lo activa)' END
+FROM information_schema.COLUMNS
+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'cliente' AND COLUMN_NAME = 'cod_cliente'
+
+UNION ALL
+
+SELECT 'AI_SOLICITUD',
+       CASE WHEN EXTRA LIKE '%auto_increment%' THEN 'OK' ELSE 'PENDIENTE (script 003 lo activa)' END
+FROM information_schema.COLUMNS
+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'solicitud' AND COLUMN_NAME = 'cod_indice_sol'
+
+UNION ALL
+
+SELECT 'AI_COMENTARIO_INCIDENCIA',
+       CASE WHEN EXTRA LIKE '%auto_increment%' THEN 'OK' ELSE 'PENDIENTE (script 004 lo activa)' END
+FROM information_schema.COLUMNS
+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'comentario_incidencia' AND COLUMN_NAME = 'cod_indice_comentario'
 ;
 
 -- ============================================================

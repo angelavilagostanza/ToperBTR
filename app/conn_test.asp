@@ -12,7 +12,8 @@ accion = Request.Form("accion")
 </head>
 <body>
 
-<h2>Diagnostico PKs sin AUTO_INCREMENT (ronda 2)</h2>
+<h2>Diagnostico PKs sin AUTO_INCREMENT (ronda 3)</h2>
+<p>Incluye USUARIOS y SOLICITUD para confirmar si 001-006 estan aplicados en esta BD.</p>
 
 <form method="post">
     <input type="submit" name="accion" value="Probar">
@@ -32,11 +33,13 @@ If accion <> "" Then
         Response.End
     End If
 
-    Dim tablas(3)
+    Dim tablas(5)
     tablas(0) = "HISTORICO_BLOQUEO_DIRECTO"
     tablas(1) = "LISTA_NEGRA"
     tablas(2) = "CLIENTE"
     tablas(3) = "HISTORICO_PASSWORD"
+    tablas(4) = "USUARIOS"
+    tablas(5) = "SOLICITUD"
 
     Dim i, rs, pkCols, extraCols
     For i = 0 To UBound(tablas)

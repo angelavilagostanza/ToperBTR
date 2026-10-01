@@ -48,10 +48,10 @@ End If %>
 <form method="post">
     <input type="hidden" name="accion" value="reset">
     <label>Usuario (COD_USUARIO):<br>
-        <input type="text" name="usuario" value="<%= Server.HTMLEncode(usuario) %>" style="width:100%;padding:.4rem;margin:.3rem 0">
+        <input type="text" maxlength="50" name="usuario" value="<%= Server.HTMLEncode(usuario) %>" style="width:100%;padding:.4rem;margin:.3rem 0">
     </label>
     <label>Nueva contrasena:<br>
-        <input type="password" name="nuevapass" style="width:100%;padding:.4rem;margin:.3rem 0">
+        <input type="password" maxlength="50" name="nuevapass" style="width:100%;padding:.4rem;margin:.3rem 0">
     </label>
     <button type="submit" style="margin-top:.8rem;width:100%;padding:.6rem;background:#e0801a;color:#fff;border:none;border-radius:4px;font-weight:600;cursor:pointer">
         Resetear hash

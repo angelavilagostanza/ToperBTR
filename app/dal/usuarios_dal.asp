@@ -1,5 +1,5 @@
 <%
-Function BuscarUsuarios(conn, filtroLogin, filtroNombre, filtroApellidos, filtroPerfil, filtroEstado)
+Function BuscarUsuarios(conn, filtroLogin, filtroNombre, filtroApellidos, filtroPerfil, filtroEstado, limite, offsetReg)
     Dim sql, listaParams(), n
     sql = "SELECT U.COD_INDICE_USUARIO, U.COD_USUARIO, U.NOMBRE, U.APELLIDOS, U.COD_PERFIL, P.NOMBRE AS NOMBRE_PERFIL, U.ESTADO, E.DESCRIPCION AS DESCRIPCION_ESTADO " & _
           "FROM USUARIOS U " & _
@@ -30,7 +30,15 @@ Function BuscarUsuarios(conn, filtroLogin, filtroNombre, filtroApellidos, filtro
         ReDim Preserve listaParams(n) : listaParams(n) = CLng(filtroEstado) : n = n + 1
     End If
 
-    sql = sql & " ORDER BY U.COD_USUARIO"
+    sql = sql & " ORDER BY U.COD_USUARIO LIMIT ? OFFSET ?"
+
+	ReDim Preserve listaParams(n)
+	listaParams(n) = CLng(limite)
+	n = n + 1
+
+	ReDim Preserve listaParams(n)
+	listaParams(n) = CLng(offsetReg)
+	n = n + 1
 
     Set BuscarUsuarios = EjecutarConsulta(conn, sql, listaParams)
 End Function
@@ -230,5 +238,62 @@ Function CambiarPasswordConHistorico(conn, codIndiceUsuario, passwordActualHash,
         CambiarPasswordConHistorico = ""
     End If
     On Error Goto 0
+End Function
+
+Function ContarUsuarios(conn, filtroLogin, filtroNombre, filtroApellidos, filtroPerfil, filtroEstado)
+
+    Dim sql, listaParams(), n, rs
+
+    sql = "SELECT COUNT(*) TOTAL " & _
+          "FROM USUARIOS U " & _
+          "INNER JOIN PERFIL_REF P ON U.COD_PERFIL = P.COD_PERFIL " & _
+          "INNER JOIN ESTADO_USUARIO_REF E ON U.ESTADO = E.ESTADO " & _
+          "WHERE 1=1"
+
+    ReDim listaParams(-1)
+    n = 0
+
+    If EsCadenaNoVacia(filtroLogin) Then
+        sql = sql & " AND U.COD_USUARIO LIKE ?"
+        ReDim Preserve listaParams(n)
+        listaParams(n) = "%" & filtroLogin & "%"
+        n = n + 1
+    End If
+
+    If EsCadenaNoVacia(filtroNombre) Then
+        sql = sql & " AND U.NOMBRE LIKE ?"
+        ReDim Preserve listaParams(n)
+        listaParams(n) = "%" & filtroNombre & "%"
+        n = n + 1
+    End If
+
+    If EsCadenaNoVacia(filtroApellidos) Then
+        sql = sql & " AND U.APELLIDOS LIKE ?"
+        ReDim Preserve listaParams(n)
+        listaParams(n) = "%" & filtroApellidos & "%"
+        n = n + 1
+    End If
+
+    If EsCadenaNoVacia(filtroPerfil) And filtroPerfil <> "-1" And IsNumeric(filtroPerfil) Then
+        sql = sql & " AND U.COD_PERFIL = ?"
+        ReDim Preserve listaParams(n)
+        listaParams(n) = CLng(filtroPerfil)
+        n = n + 1
+    End If
+
+    If EsCadenaNoVacia(filtroEstado) And filtroEstado <> "-1" And IsNumeric(filtroEstado) Then
+        sql = sql & " AND U.ESTADO = ?"
+        ReDim Preserve listaParams(n)
+        listaParams(n) = CLng(filtroEstado)
+        n = n + 1
+    End If
+
+    Set rs = EjecutarConsulta(conn, sql, listaParams)
+
+    ContarUsuarios = CLng(rs("TOTAL"))
+
+    rs.Close
+    Set rs = Nothing
+
 End Function
 %>

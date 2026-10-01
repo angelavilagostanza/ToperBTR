@@ -16,6 +16,7 @@ codIndIncidencia = CLng(Request.QueryString("cod"))
 
 Dim inc
 Set inc = ObtenerIncidenciaPorIndice(conn, codIndIncidencia)
+
 If inc Is Nothing Then
     conn.Close
     Response.Redirect "/errors/error.asp"
@@ -55,13 +56,14 @@ errorMsg = Request.QueryString("error")
         <tr><th>Causa</th><td><%= Server.HTMLEncode(inc("Causa")) %></td></tr>
         <tr><th>Otros datos</th><td><%= Server.HTMLEncode(inc("OtrosDatos")) %></td></tr>
         <tr><th>Fecha creacion</th><td><%= inc("FechaCreacion") %></td></tr>
-        <tr><th>Fecha resolucion</th><td><%= inc("FechaResolucion") & "" %></td></tr>
+        <tr><th>Fecha actualizacion</th><td><%= inc("FechaActualizacion") & "" %></td></tr>
         <tr><th>Vinculada a</th><td>
             <% If inc("TipoObjeto") = "S" And EsCadenaNoVacia(inc("CodSolicitud")) Then %>
             Solicitud <a href="/modules/solicitudes/detalle.asp?cod=<%= inc("CodObjeto") %>"><%= Server.HTMLEncode(inc("CodSolicitud")) %></a>
-            <% ElseIf inc("TipoObjeto") = "F" And EsCadenaNoVacia(inc("NombreFichero")) Then %>
-            Fichero <%= Server.HTMLEncode(inc("NombreFichero")) %> (consulta detallada disponible en el Entregable 5)
-            <% Else %>
+            <% ElseIf inc("TipoObjeto") = "F" And EsCadenaNoVacia(inc("NombreFichero") & "") Then %>
+			Fichero
+			<a href="/modules/ficheros/descargar.asp?nombre=<%= Server.URLEncode(inc("NombreFichero")) %>"><%= Server.HTMLEncode(inc("NombreFichero")) %></a>
+			<% Else %>
             &mdash;
             <% End If %>
         </td></tr>

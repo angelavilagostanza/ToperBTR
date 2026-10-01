@@ -79,7 +79,7 @@ End Function
     <form method="get" action="/modules/incidencias/buscar.asp" class="formulario-busqueda" onsubmit="return validarFiltros(this)">
         <input type="hidden" name="buscado" value="1">
         <div class="formulario-fila">
-            <label>Codigo <input type="text" name="codIncidencia" value="<%= Server.HTMLEncode(fCod) %>"></label>
+            <label>Codigo <input type="text" maxlength="50" name="codIncidencia" value="<%= Server.HTMLEncode(fCod) %>"></label>
             <label>Tipo
                 <select name="tipo">
                     <option value="-1">Todos</option>
@@ -107,8 +107,8 @@ End Function
                     Loop %>
                 </select>
             </label>
-            <label>Codigo solicitud <input type="text" name="codSolicitud" value="<%= Server.HTMLEncode(fCodSolicitud) %>"></label>
-            <label>Nombre fichero <input type="text" name="nombreFichero" value="<%= Server.HTMLEncode(fNombreFichero) %>"></label>
+            <label>Codigo solicitud <input type="text" maxlength="50" name="codSolicitud" value="<%= Server.HTMLEncode(fCodSolicitud) %>"></label>
+            <label>Nombre fichero <input type="text" maxlength="50" name="nombreFichero" value="<%= Server.HTMLEncode(fNombreFichero) %>"></label>
             <label>Registros
                 <select name="limite">
                     <option value="25"<% If limite = 25 Then Response.Write " selected" %>>25</option>

@@ -47,20 +47,20 @@ atributoReadonly = SiVerdadero(soloLecturaCliente, " readonly", "")
             <input type="text" name="numDenuncia" maxlength="20" required>
         </label>
         <label>Fecha del robo
-            <input type="date" name="fechaRobo" required>
+            <input type="date" maxlength="50" name="fechaRobo" required>
         </label>
         <label>Fecha de la denuncia
-            <input type="date" name="fechaDenuncia" required>
+            <input type="date" maxlength="50" name="fechaDenuncia" required>
         </label>
         <% Else %>
         <label>Numero de denuncia (opcional)
             <input type="text" name="numDenuncia" maxlength="20">
         </label>
         <label>Fecha del robo (opcional)
-            <input type="date" name="fechaRobo">
+            <input type="date" maxlength="50" name="fechaRobo">
         </label>
         <label>Fecha de la denuncia (opcional)
-            <input type="date" name="fechaDenuncia">
+            <input type="date" maxlength="50" name="fechaDenuncia">
         </label>
         <% End If %>
         <label>NIF/CIF del cliente

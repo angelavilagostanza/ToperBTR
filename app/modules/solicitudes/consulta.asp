@@ -163,11 +163,11 @@ End Function
     <form method="get" action="/modules/solicitudes/consulta.asp" class="formulario-busqueda" onsubmit="return validarFiltros(this)">
         <input type="hidden" name="buscado" value="1">
         <div class="formulario-fila">
-            <label>Codigo <input type="text" name="codSolicitud" value="<%= Server.HTMLEncode(fCod) %>"></label>
-            <label>IMEI <input type="text" name="imei" value="<%= Server.HTMLEncode(fImei) %>"></label>
-            <label>MSISDN <input type="text" name="msisdn" value="<%= Server.HTMLEncode(fMsisdn) %>"></label>
-            <label>NIF/CIF cliente <input type="text" name="identCliente" value="<%= Server.HTMLEncode(fIdent) %>"></label>
-            <label>Nombre cliente <input type="text" name="nombreCliente" value="<%= Server.HTMLEncode(fNombre) %>"></label>            
+            <label>Codigo <input type="text" name="codSolicitud" maxlength="50" value="<%= Server.HTMLEncode(fCod) %>"></label>
+            <label>IMEI <input type="text" name="imei" maxlength="50" value="<%= Server.HTMLEncode(fImei) %>"></label>
+            <label>MSISDN <input type="text" name="msisdn" maxlength="50" value="<%= Server.HTMLEncode(fMsisdn) %>"></label>
+            <label>NIF/CIF cliente <input type="text" name="identCliente" maxlength="50" value="<%= Server.HTMLEncode(fIdent) %>"></label>
+            <label>Nombre cliente <input type="text" name="nombreCliente" maxlength="50" value="<%= Server.HTMLEncode(fNombre) %>"></label>            
             <label>Tipo
                 <select name="tipo">
                     <option value="-1">Todos</option>

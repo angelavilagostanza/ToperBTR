@@ -39,7 +39,7 @@ Function BuscarSolicitudPadrePorImei(conn, imei)
     codInclusion = CodigoTipoSolicitudPorClave(conn, "I")
     Set rs = EjecutarConsulta(conn, _
         "SELECT S.COD_INDICE_SOL, C.NOMBRE, C.PRIMER_APELLIDO, C.SEGUNDO_APELLIDO, C.NUM_IDENTIFICACION " & _
-        "FROM SOLICITUD S INNER JOIN CLIENTE C ON S.COD_CLIENTE = C.COD_CLIENTE " & _
+        "FROM SOLICITUD S LEFT JOIN CLIENTE C ON S.COD_CLIENTE = C.COD_CLIENTE " & _
         "WHERE S.IMEI LIKE ? AND S.COD_TIPO_SOLICITUD = ? ORDER BY S.FECHA_SOLICITUD DESC", _
         Array(Left(imei, 14) & "%", codInclusion))
     If rs.EOF Then
@@ -168,7 +168,7 @@ Function BuscarSolicitudes(conn, filtroCodSolicitud, filtroImei, filtroMsisdn, f
       "CONCAT_WS(' ', C.NOMBRE, C.PRIMER_APELLIDO, C.SEGUNDO_APELLIDO) AS CLIENTE, E.DESCRIPCION AS ESTADO_VIGENTE " & _
       "FROM SOLICITUD S " & _
       "INNER JOIN TIPO_SOLICITUD_REF T ON S.COD_TIPO_SOLICITUD = T.COD_TIPO_SOLICITUD " & _
-      "INNER JOIN CLIENTE C ON S.COD_CLIENTE = C.COD_CLIENTE " & _
+      "LEFT JOIN CLIENTE C ON S.COD_CLIENTE = C.COD_CLIENTE " & _
       "INNER JOIN HISTORICO_ESTADO_SOLICITUD H ON H.COD_INDICE_SOL = S.COD_INDICE_SOL " & _
       "AND H.FECHA_INICIO = ( " & _
       "SELECT MAX(H2.FECHA_INICIO) " & _
@@ -226,7 +226,7 @@ Function ContarSolicitudes(conn, filtroCodSolicitud, filtroImei, filtroMsisdn, f
     sql = "SELECT COUNT(*) AS N " & _
       "FROM SOLICITUD S " & _
       "INNER JOIN TIPO_SOLICITUD_REF T ON S.COD_TIPO_SOLICITUD = T.COD_TIPO_SOLICITUD " & _
-      "INNER JOIN CLIENTE C ON S.COD_CLIENTE = C.COD_CLIENTE " & _
+      "LEFT JOIN CLIENTE C ON S.COD_CLIENTE = C.COD_CLIENTE " & _
       "INNER JOIN HISTORICO_ESTADO_SOLICITUD H ON H.COD_INDICE_SOL = S.COD_INDICE_SOL " & _
       "AND H.FECHA_INICIO = ( " & _
       "SELECT MAX(H2.FECHA_INICIO) " & _
@@ -289,7 +289,7 @@ Function ObtenerSolicitudPorIndice(conn, codIndiceSol)
         "U.COD_USUARIO AS USUARIO_CREADOR " & _
         "FROM SOLICITUD S " & _
         "INNER JOIN TIPO_SOLICITUD_REF T ON S.COD_TIPO_SOLICITUD = T.COD_TIPO_SOLICITUD " & _
-        "INNER JOIN CLIENTE CL ON S.COD_CLIENTE = CL.COD_CLIENTE " & _
+        "LEFT JOIN CLIENTE CL ON S.COD_CLIENTE = CL.COD_CLIENTE " & _
         "INNER JOIN USUARIOS U ON S.COD_INDICE_USUARIO = U.COD_INDICE_USUARIO " & _
         "WHERE S.COD_INDICE_SOL = ?", Array(codIndiceSol))
     If rs.EOF Then

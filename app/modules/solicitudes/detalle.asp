@@ -16,6 +16,7 @@ codIndiceSol = CLng(Request.QueryString("cod"))
 
 Dim sol
 Set sol = ObtenerSolicitudPorIndice(conn, codIndiceSol)
+
 If sol Is Nothing Then
     conn.Close
     Response.Redirect "/errors/error.asp"

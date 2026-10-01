@@ -5,6 +5,10 @@ app/global.asa
 # Fuera de alcance de este repositorio (trunk SVN legacy, solo referencia local).
 ProyectoBTR - Codigo Java/
 
+# Datos sensibles/de produccion (ficheros de intercambio EIR con IMEIs reales).
+# No son parte del desarrollo de codigo, nunca se suben al repositorio.
+FicherosBTR/
+
 # Basura habitual de SO/editor
 Thumbs.db
 .DS_Store

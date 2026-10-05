@@ -125,13 +125,18 @@ Function DarBajaUsuariosLote(conn, listaIds, codEstadoBorrado)
     DarBajaUsuariosLote = ok
 End Function
 
-Function DesbloquearUsuariosLote(conn, listaIds, codEstadoActivo)
+' codEstadoBorrado se excluye explicitamente (igual que hace DarBajaUsuariosLote con el
+' suyo): un usuario dado de baja nunca debe poder "resucitarse" a Activo por esta via, ni
+' siquiera por error al seleccionarlo junto a otros en una vista sin filtrar por Estado
+' (ver listar.asp) - la baja logica es permanente (ver memoria del proyecto, decision de
+' no reutilizacion de cod_usuario).
+Function DesbloquearUsuariosLote(conn, listaIds, codEstadoActivo, codEstadoBorrado)
     Dim i, ok
     ok = True
     conn.BeginTrans
     On Error Resume Next
     For i = 0 To UBound(listaIds)
-        Call EjecutarNonQueryTx(conn, "UPDATE USUARIOS SET ESTADO = ?, NUM_FALLOS = 0 WHERE COD_INDICE_USUARIO = ?", Array(codEstadoActivo, listaIds(i)))
+        Call EjecutarNonQueryTx(conn, "UPDATE USUARIOS SET ESTADO = ?, NUM_FALLOS = 0 WHERE COD_INDICE_USUARIO = ? AND ESTADO <> ?", Array(codEstadoActivo, listaIds(i), codEstadoBorrado))
         If Err.Number <> 0 Then
             ok = False
             Exit For
@@ -144,6 +149,31 @@ Function DesbloquearUsuariosLote(conn, listaIds, codEstadoActivo)
     End If
     On Error Goto 0
     DesbloquearUsuariosLote = ok
+End Function
+
+' Bloqueo manual por el administrador (distinto del bloqueo automatico por intentos
+' fallidos de login, que ya pone ESTADO=Bloqueado por su cuenta). codEstadoBorrado se
+' excluye por el mismo motivo que en DesbloquearUsuariosLote: un usuario dado de baja no
+' debe poder pasar a Bloqueado por esta via, la baja logica es permanente.
+Function BloquearUsuariosLote(conn, listaIds, codEstadoBloqueado, codEstadoBorrado)
+    Dim i, ok
+    ok = True
+    conn.BeginTrans
+    On Error Resume Next
+    For i = 0 To UBound(listaIds)
+        Call EjecutarNonQueryTx(conn, "UPDATE USUARIOS SET ESTADO = ? WHERE COD_INDICE_USUARIO = ? AND ESTADO <> ? AND ESTADO <> ?", Array(codEstadoBloqueado, listaIds(i), codEstadoBorrado, codEstadoBloqueado))
+        If Err.Number <> 0 Then
+            ok = False
+            Exit For
+        End If
+    Next
+    If Not ok Then
+        conn.RollbackTrans
+    Else
+        conn.CommitTrans
+    End If
+    On Error Goto 0
+    BloquearUsuariosLote = ok
 End Function
 
 ' Se llama siempre desde dentro de la transaccion de CambiarPasswordConHistorico (via

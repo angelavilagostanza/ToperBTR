@@ -137,8 +137,7 @@ End Function
 
     <form method="post" action="/modules/usuarios/confirmar_accion.asp">
         <input type="hidden" name="csrf" value="<%= Server.HTMLEncode(token) %>">
-		<%
-		%>
+        <input type="hidden" name="volver" value="<%= Server.HTMLEncode(UrlPagina(pagina, limite)) %>">
 		<div class="paginacion">
 			<span class="paginacion-info">
 				<%= totalRegistros %> resultado<% If totalRegistros <> 1 Then Response.Write "s" %>
@@ -172,48 +171,39 @@ End Function
 			<td><%= Server.HTMLEncode(rsUsuarios("APELLIDOS") & "") %></td>
 			<td><%= Server.HTMLEncode(rsUsuarios("NOMBRE_PERFIL") & "") %></td>
 			<td><%= Server.HTMLEncode(rsUsuarios("DESCRIPCION_ESTADO") & "") %></td>
-            <td><a href="/modules/usuarios/reset_password_admin.asp?cod=<%= rsUsuarios("COD_INDICE_USUARIO") %>">Cambiar contrasena</a></td>
+            <td>
+                <a href="/modules/usuarios/reset_password_admin.asp?cod=<%= rsUsuarios("COD_INDICE_USUARIO") %>" class="cabecera-icono" title="Cambiar contraseña">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="8" cy="15" r="4"/><path d="M12 11l7-7m-3 0l3 3"/>
+                    </svg>
+                    <span class="cabecera-icono-label">Cambiar contrasena</span>
+                </a>
+            </td>
         </tr>
         <% rsUsuarios.MoveNext
         Loop %>
         </tbody>
         </table>
 		<%
+		' Los tres botones se muestran siempre, independientemente del filtro de Estado
+		' activo: la lista puede mezclar usuarios en distintos estados (sobre todo con
+		' Estado=Todos), y aplicar una accion a un usuario al que no le corresponde es
+		' un no-op seguro (ver guardas AND ESTADO <> ? en DarBajaUsuariosLote,
+		' DesbloquearUsuariosLote y BloquearUsuariosLote, usuarios_dal.asp) — nunca
+		' "resucita" a un usuario dado de baja ni rompe nada en un usuario ya en el
+		' estado destino.
 		%>
-		<%
-			If IsNumeric(filtroEstado) Then
+		<button type="submit" name="accion" value="baja">
+			Dar de baja seleccionados
+		</button>
 
-				Select Case CInt(filtroEstado)
+		<button type="submit" name="accion" value="bloqueo">
+			Bloquear seleccionados
+		</button>
 
-					Case 1 ' Activo
-			%>
-						<button type="submit" name="accion" value="baja">
-							Dar de baja seleccionados
-						</button>
-			<%
-					Case 2 ' Bloqueado
-			%>
-						<button type="submit" name="accion" value="desbloqueo">
-							Desbloquear seleccionados
-						</button>
-			<%
-					Case -1, 0, 3 ' Borrado o Logeado
-						' No mostrar botones
-
-					Case Else
-			%>
-						<button type="submit" name="accion" value="baja">
-							Dar de baja seleccionados
-						</button>
-
-						<button type="submit" name="accion" value="desbloqueo">
-							Desbloquear seleccionados
-						</button>
-			<%
-				End Select
-
-			End If
-		%>
+		<button type="submit" name="accion" value="desbloqueo">
+			Desbloquear seleccionados
+		</button>
     </form>
 </main>
 </div>

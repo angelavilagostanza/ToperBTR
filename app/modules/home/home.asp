@@ -78,7 +78,7 @@ Call RequiereSesion()
             </svg>
             <span class="indice-card-cuerpo">
                 <span class="indice-card-titulo">Usuarios</span>
-                <span class="indice-card-desc">Alta, baja y desbloqueo de cuentas de usuario. Cambio de contraseña por el administrador.</span>
+                <span class="indice-card-desc">Alta, baja y desbloqueo de cuentas de usuario. Cambio de contraseña por el administrador. Bloqueo automático tras 5 intentos fallidos.</span>
             </span>
         </a>
         <% End If %>

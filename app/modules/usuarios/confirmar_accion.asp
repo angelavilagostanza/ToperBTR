@@ -11,24 +11,41 @@ If Not TokenCsrfValido(Request.Form("csrf")) Then
     Response.End
 End If
 
-Dim accion, seleccionCsv
+Dim accion, seleccionCsv, volver
 accion = Request.Form("accion")
 seleccionCsv = Request.Form("seleccion")
+
+' "volver" trae los filtros/pagina/limite actuales de listar.asp para no perderlos al
+' terminar la accion. Viene de un campo de formulario (manipulable), asi que se valida
+' que sea una ruta local a listar.asp antes de usarla en ningun sitio - evita un
+' redirect abierto a una URL externa.
+volver = Request.Form("volver")
+If Not (EsCadenaNoVacia(volver) And Left(volver, Len("/modules/usuarios/listar.asp")) = "/modules/usuarios/listar.asp") Then
+    volver = "/modules/usuarios/listar.asp"
+End If
 
 If Not EsCadenaNoVacia(seleccionCsv) Then
     conn.Close
     Call EstablecerMensajeFlash("error", "No se ha seleccionado ningun usuario.")
-    Response.Redirect "/modules/usuarios/listar.asp"
+    Response.Redirect volver
     Response.End
 End If
 
 Dim listaIds, i, textoAccion
 listaIds = Split(seleccionCsv, ",")
-If accion = "baja" Then
-    textoAccion = "dar de baja"
-Else
-    textoAccion = "desbloquear"
-End If
+
+Select Case accion
+    Case "baja"
+        textoAccion = "dar de baja"
+    Case "bloqueo"
+        textoAccion = "bloquear"
+    Case "desbloqueo"
+        textoAccion = "desbloquear"
+    Case Else
+        conn.Close
+        Response.Redirect volver
+        Response.End
+End Select
 
 Dim tokenConfirm
 tokenConfirm = GenerarTokenCsrf()
@@ -62,8 +79,9 @@ tokenConfirm = GenerarTokenCsrf()
         <input type="hidden" name="csrf" value="<%= Server.HTMLEncode(tokenConfirm) %>">
         <input type="hidden" name="accion" value="<%= Server.HTMLEncode(accion) %>">
         <input type="hidden" name="seleccion" value="<%= Server.HTMLEncode(seleccionCsv) %>">
+        <input type="hidden" name="volver" value="<%= Server.HTMLEncode(volver) %>">
         <button type="submit">Confirmar</button>
-        <a href="/modules/usuarios/listar.asp">Cancelar</a>
+        <a href="<%= Server.HTMLEncode(volver) %>">Cancelar</a>
     </form>
 </main>
 </div>

@@ -11,13 +11,19 @@ If Not TokenCsrfValido(Request.Form("csrf")) Then
     Response.End
 End If
 
-Dim accion, seleccionCsv, listaIdsStr, listaIdsLng, i
+Dim accion, seleccionCsv, volver, listaIdsStr, listaIdsLng, i
 accion = Request.Form("accion")
 seleccionCsv = Request.Form("seleccion")
 
+' Ver el mismo comentario en confirmar_accion.asp: ruta validada contra open-redirect.
+volver = Request.Form("volver")
+If Not (EsCadenaNoVacia(volver) And Left(volver, Len("/modules/usuarios/listar.asp")) = "/modules/usuarios/listar.asp") Then
+    volver = "/modules/usuarios/listar.asp"
+End If
+
 If Not EsCadenaNoVacia(seleccionCsv) Then
     conn.Close
-    Response.Redirect "/modules/usuarios/listar.asp"
+    Response.Redirect volver
     Response.End
 End If
 
@@ -27,15 +33,23 @@ For i = 0 To UBound(listaIdsStr)
     listaIdsLng(i) = CLng(listaIdsStr(i))
 Next
 
-Dim ok, codBorrado, codActivo
+Dim ok, codBorrado, codActivo, codBloqueado
 codBorrado = CodigoEstadoUsuario(conn, "Borrado")
 codActivo = CodigoEstadoUsuario(conn, "Activo")
+codBloqueado = CodigoEstadoUsuario(conn, "Bloqueado")
 
-If accion = "baja" Then
-    ok = DarBajaUsuariosLote(conn, listaIdsLng, codBorrado)
-Else
-    ok = DesbloquearUsuariosLote(conn, listaIdsLng, codActivo)
-End If
+Select Case accion
+    Case "baja"
+        ok = DarBajaUsuariosLote(conn, listaIdsLng, codBorrado)
+    Case "bloqueo"
+        ok = BloquearUsuariosLote(conn, listaIdsLng, codBloqueado, codBorrado)
+    Case "desbloqueo"
+        ok = DesbloquearUsuariosLote(conn, listaIdsLng, codActivo, codBorrado)
+    Case Else
+        conn.Close
+        Response.Redirect volver
+        Response.End
+End Select
 
 If ok Then
     For i = 0 To UBound(listaIdsLng)
@@ -48,5 +62,5 @@ End If
 
 conn.Close
 Set conn = Nothing
-Response.Redirect "/modules/usuarios/listar.asp"
+Response.Redirect volver
 %>

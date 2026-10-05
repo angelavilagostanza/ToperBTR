@@ -160,6 +160,29 @@ End Function
         </nav>
     </div>
 
+    <details class="debug-sql">
+        <summary>Ver consulta SQL generada</summary>
+        <p><strong>ContarIncidencias</strong> (calcula el total para la paginaci&oacute;n):</p>
+        <pre><%= Server.HTMLEncode(UltimaSqlContarIncidencias) %></pre>
+        <ol>
+        <% Dim diCI
+        For diCI = 0 To UBound(UltimaParamsContarIncidencias)
+        %>
+            <li><code><%= Server.HTMLEncode(TextoDebugParametro(UltimaParamsContarIncidencias(diCI))) %></code></li>
+        <% Next %>
+        </ol>
+        <p><strong>BuscarIncidencias</strong> (trae las filas de la pagina actual):</p>
+        <pre><%= Server.HTMLEncode(UltimaSqlIncidencias) %></pre>
+        <ol>
+        <% Dim diI
+        For diI = 0 To UBound(UltimaParamsIncidencias)
+        %>
+            <li><code><%= Server.HTMLEncode(TextoDebugParametro(UltimaParamsIncidencias(diI))) %></code></li>
+        <% Next %>
+        </ol>
+        <p class="ayuda-campo">Los <code>?</code> son los marcadores reales que recibe el driver ODBC; los valores de la lista son los que se enlazan a cada uno, en orden. No es una concatenacion de texto — asi se evita la inyeccion SQL y la ambiguedad de formato de fecha.</p>
+    </details>
+
     <table class="tabla-datos">
     <thead>
     <tr><th>Codigo</th><th>Tipo</th><th>Operador</th><th>Estado</th><th>Vinculada a</th><th>Creacion</th></tr>

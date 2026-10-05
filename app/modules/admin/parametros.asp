@@ -57,7 +57,7 @@ End Function
     <table class="tabla-datos tabla-admin-params">
     <thead>
     <tr>
-        <th>Clave</th>
+        <th>Parametro</th>
         <th>Valor actual</th>
         <th>Descripcion</th>
         <th></th>

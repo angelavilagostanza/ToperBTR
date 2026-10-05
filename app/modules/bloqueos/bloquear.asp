@@ -28,6 +28,11 @@ tokenCsrf = GenerarTokenCsrf()
 <main class="contenido">
     <h2>Bloquear IMEI</h2>
 
+    <nav class="modulo-nav">
+        <a href="/modules/bloqueos/bloqueo.asp" class="modulo-nav-item">Buscar</a>
+        <span class="modulo-nav-item activo">+ Nuevo Bloqueo</span>
+    </nav>
+
     <form method="post" action="/modules/bloqueos/bloquear_do.asp" class="form-edicion">
         <input type="hidden" name="csrf" value="<%= Server.HTMLEncode(tokenCsrf) %>">
 

@@ -186,7 +186,7 @@ End Function
 ' contienen la componente del tipo filtrado), igual que hacia el legacy, pero resolviendo
 ' el codigo del tipo COMBINADO por catalogo en vez de hardcodearlo como hacia el Java.
 ' Devuelve un Recordset — cerrar en el llamador.
-Function ListarBloqueos(conn, imei, codTipo, codRazon, fechaDesde, fechaHasta)
+Function ListarBloqueos(conn, imei, codTipo, codRazon, fechaDesde, fechaHasta, limite, offsetReg)
     Dim sql, paramsList(), paramCount
     paramCount = 0
     ReDim paramsList(5)
@@ -221,26 +221,83 @@ Function ListarBloqueos(conn, imei, codTipo, codRazon, fechaDesde, fechaHasta)
         paramCount = paramCount + 1
     End If
 
-    If Trim(fechaDesde & "") <> "" Then
+    If IsDate(fechaDesde) Then
         sql = sql & " AND LN.FECHA_INCLUSION >= ?"
         paramsList(paramCount) = CDate(fechaDesde)
         paramCount = paramCount + 1
     End If
 
-    If Trim(fechaHasta & "") <> "" Then
+    If IsDate(fechaHasta) Then
         sql = sql & " AND LN.FECHA_INCLUSION < DATE_ADD(?, INTERVAL 1 DAY)"
         paramsList(paramCount) = CDate(fechaHasta)
         paramCount = paramCount + 1
     End If
 
-    sql = sql & " ORDER BY LN.FECHA_INCLUSION DESC"
+    sql = sql & " ORDER BY LN.FECHA_INCLUSION DESC LIMIT ? OFFSET ?"
+
+    ReDim Preserve paramsList(paramCount + 1)
+    paramsList(paramCount)     = CLng(limite)
+    paramsList(paramCount + 1) = CLng(offsetReg)
+
+    Set ListarBloqueos = EjecutarConsulta(conn, sql, paramsList)
+End Function
+
+' Mismos filtros que ListarBloqueos, sin LIMIT/OFFSET — usado para calcular la paginacion.
+Function ContarBloqueos(conn, imei, codTipo, codRazon, fechaDesde, fechaHasta)
+    Dim sql, paramsList(), paramCount, rs
+    paramCount = 0
+    ReDim paramsList(5)
+
+    sql = "SELECT COUNT(*) AS N " & _
+          "FROM LISTA_NEGRA LN " & _
+          "LEFT JOIN TIPO_BLOQUEO_REF TB ON TB.COD_TIPO_BLOQUEO = LN.COD_TIPO_BLOQUEO " & _
+          "LEFT JOIN RAZON_LISTA_NEGRA_REF RLN ON RLN.COD_RAZON = LN.COD_RAZON " & _
+          "WHERE 1=1"
+
+    If Len(imei) >= 14 Then
+        sql = sql & " AND LN.IMEI LIKE ?"
+        paramsList(paramCount) = Left(imei, 14) & "%"
+        paramCount = paramCount + 1
+    End If
+
+    If CLng(codTipo & "0") > 0 Then
+        Dim codCombinado
+        codCombinado = CodigoTipoBloqueo(conn, "BLOQUEO DIRECTO Y GLOBAL")
+        sql = sql & " AND LN.COD_TIPO_BLOQUEO IN (?, ?)"
+        paramsList(paramCount) = CLng(codTipo)
+        paramCount = paramCount + 1
+        paramsList(paramCount) = codCombinado
+        paramCount = paramCount + 1
+    End If
+
+    If CLng(codRazon & "0") > 0 Then
+        sql = sql & " AND LN.COD_RAZON = ?"
+        paramsList(paramCount) = CLng(codRazon)
+        paramCount = paramCount + 1
+    End If
+
+    If IsDate(fechaDesde) Then
+        sql = sql & " AND LN.FECHA_INCLUSION >= ?"
+        paramsList(paramCount) = CDate(fechaDesde)
+        paramCount = paramCount + 1
+    End If
+
+    If IsDate(fechaHasta) Then
+        sql = sql & " AND LN.FECHA_INCLUSION < DATE_ADD(?, INTERVAL 1 DAY)"
+        paramsList(paramCount) = CDate(fechaHasta)
+        paramCount = paramCount + 1
+    End If
 
     If paramCount = 0 Then
-        Set ListarBloqueos = EjecutarConsulta(conn, sql, Array())
+        Set rs = EjecutarConsulta(conn, sql, Array())
     Else
         ReDim Preserve paramsList(paramCount - 1)
-        Set ListarBloqueos = EjecutarConsulta(conn, sql, paramsList)
+        Set rs = EjecutarConsulta(conn, sql, paramsList)
     End If
+
+    ContarBloqueos = CLng(rs("N"))
+    rs.Close
+    Set rs = Nothing
 End Function
 
 ' Desbloquea un array de IMEIs (componente BLOQUEO DIRECTO), cada uno en su propia

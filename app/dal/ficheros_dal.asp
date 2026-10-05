@@ -13,6 +13,11 @@
 ' nombre de fichero, no una decision de diseno nueva de ToperBTR - se preserva porque asi
 ' es como EIRControl nombra los ficheros hoy y no se puede cambiar sin tocar EIRControl
 ' (fuera de alcance).
+' Ultima consulta ejecutada por BuscarFicheros/ContarFicheros, guardada solo para
+' poder pintarla en pantalla y analizarla (ver buscar.asp).
+Dim UltimaSqlFicheros, UltimaParamsFicheros
+Dim UltimaSqlContarFicheros, UltimaParamsContarFicheros
+
 Function ContarFicheros(conn, filtroNombre, filtroTipo, filtroOperador, filtroFechaDesde, filtroFechaHasta, esAdministrador)
     Dim sql, listaParams(), n, codFicheroGenerico, rs
     codFicheroGenerico = ValorParametroEntero(conn, "COD_FICHERO_GENERICO", 0)
@@ -62,6 +67,9 @@ Function ContarFicheros(conn, filtroNombre, filtroTipo, filtroOperador, filtroFe
         Case "C" : sql = sql & " AND LENGTH(F.NOMBRE) = 7"
         Case "E" : sql = sql & " AND LENGTH(F.NOMBRE) = 11"
     End Select
+
+    UltimaSqlContarFicheros = sql
+    UltimaParamsContarFicheros = listaParams
 
     Set rs = EjecutarConsulta(conn, sql, listaParams)
     ContarFicheros = CLng(rs("N"))
@@ -137,6 +145,10 @@ Function BuscarFicheros(conn, filtroNombre, filtroTipo, filtroOperador, filtroFe
     End Select
 
     sql = sql & " ORDER BY F.FECHA_CREACION DESC LIMIT " & CLng(offset) & ", " & CLng(limite)
+
+    UltimaSqlFicheros = sql
+    UltimaParamsFicheros = listaParams
+
     Set BuscarFicheros = EjecutarConsulta(conn, sql, listaParams)
 End Function
 

@@ -292,6 +292,16 @@ body {
 
 .tabla-datos tbody tr:hover { background: #fffaf5; }
 
+/* --- Tabla de parametros de Administracion --- */
+
+.input-param-valor {
+    width: 240px;
+}
+
+.form-param-inline button {
+    margin-left: 3ch;
+}
+
 /* --- Formularios de edicion modernos --- */
 
 .form-edicion {
@@ -335,6 +345,25 @@ body {
     margin-top: .3rem;
     font-size: .78rem;
     color: #777;
+}
+
+.debug-sql {
+    margin-bottom: 1rem;
+    padding: .75rem 1rem;
+    background: #fafafa;
+    border: 1px solid var(--gris-borde);
+    border-radius: 4px;
+    font-size: .85rem;
+}
+
+.debug-sql pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: 4px;
+    padding: .6rem .75rem;
+    font-size: .8rem;
 }
 
 .acciones-form {

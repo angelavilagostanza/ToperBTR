@@ -8,13 +8,28 @@ Set conn = NuevaConexion()
 ' menú (sin comprobación real en servidor). Ver docs/04-matriz-permisos.md.
 Call RequierePerfil(Array(CodigoPerfilCacheado("Administrador"), CodigoPerfilCacheado("Tramitación")))
 
-Dim fImei, fTipo, fRazon, fDesde, fHasta, busquedaRealizada
-fImei    = Trim(Request.Form("imei") & "")
-fTipo    = Trim(Request.Form("tipo") & "")
-fRazon   = Trim(Request.Form("razon") & "")
-fDesde   = Trim(Request.Form("fechaDesde") & "")
-fHasta   = Trim(Request.Form("fechaHasta") & "")
-busquedaRealizada = (Request.ServerVariables("REQUEST_METHOD") = "POST")
+Dim fImei, fTipo, fRazon, fDesde, fHasta, buscado
+Dim limite, pagina, totalRegistros, totalPaginas, offsetReg
+
+fImei    = Trim(Request.QueryString("imei") & "")
+fTipo    = Trim(Request.QueryString("tipo") & "")
+fRazon   = Trim(Request.QueryString("razon") & "")
+fDesde   = Trim(Request.QueryString("fechaDesde") & "")
+fHasta   = Trim(Request.QueryString("fechaHasta") & "")
+buscado  = (Request.QueryString("buscado") = "1")
+
+Select Case CStr(Request.QueryString("limite"))
+    Case "100":  limite = 100
+    Case "1000": limite = 1000
+    Case Else:   limite = 25
+End Select
+
+pagina = 1
+If IsNumeric(Request.QueryString("pagina")) Then
+    If CLng(Request.QueryString("pagina")) > 1 Then
+        pagina = CLng(Request.QueryString("pagina"))
+    End If
+End If
 
 ' Validar IMEI si se ha introducido: 15 digitos numericos exactos.
 ' Corrige el bug real de BusquedaBloqueoForm.validate() del legacy, donde la comprobacion
@@ -22,7 +37,7 @@ busquedaRealizada = (Request.ServerVariables("REQUEST_METHOD") = "POST")
 ' que nunca se ejecutaba, dejando sin validar el formato numerico.
 Dim errImei
 errImei = ""
-If busquedaRealizada And fImei <> "" Then
+If buscado And fImei <> "" Then
     If Len(fImei) <> 15 Then
         errImei = "El IMEI debe tener exactamente 15 digitos."
     ElseIf Not CumpleFormato(fImei, "^\d{15}$") Then
@@ -30,32 +45,25 @@ If busquedaRealizada And fImei <> "" Then
     End If
 End If
 
-' Validar fechas si se han introducido
-Dim errFecha
-errFecha = ""
-If busquedaRealizada Then
-    If fDesde <> "" And Not IsDate(fDesde) Then
-        errFecha = "La fecha 'desde' no tiene un formato valido (dd/mm/aaaa)."
-    ElseIf fHasta <> "" And Not IsDate(fHasta) Then
-        errFecha = "La fecha 'hasta' no tiene un formato valido (dd/mm/aaaa)."
-    ElseIf fDesde <> "" And fHasta <> "" And IsDate(fDesde) And IsDate(fHasta) Then
-        If CDate(fDesde) > CDate(fHasta) Then
-            errFecha = "La fecha 'desde' no puede ser posterior a la fecha 'hasta'."
-        End If
-    End If
-End If
-
 Dim hayErrores
-hayErrores = (errImei <> "" Or errFecha <> "")
+hayErrores = (errImei <> "")
 
 Dim rsBloqueos, rsTipos, rsRazones
 Set rsTipos  = ListarTiposBloqueo(conn)
 Set rsRazones = ListarRazones(conn)
 
-If busquedaRealizada And Not hayErrores Then
-    Set rsBloqueos = ListarBloqueos(conn, fImei, fTipo, fRazon, _
-        SiVerdadero(fDesde <> "" And IsDate(fDesde), fDesde, ""), _
-        SiVerdadero(fHasta <> "" And IsDate(fHasta), fHasta, ""))
+' Los campos de fecha son <input type="date">: el navegador ya garantiza formato
+' ISO "aaaa-mm-dd" o cadena vacia. ContarBloqueos/ListarBloqueos filtran con
+' IsDate()/CDate(), igual que el resto de busquedas de la aplicacion
+' (incidencias_dal.asp, ficheros_dal.asp, solicitudes_dal.asp).
+If buscado And Not hayErrores Then
+    totalRegistros = ContarBloqueos(conn, fImei, fTipo, fRazon, fDesde, fHasta)
+    totalPaginas   = Int((totalRegistros + limite - 1) / limite)
+    If totalPaginas < 1 Then totalPaginas = 1
+    If pagina > totalPaginas Then pagina = totalPaginas
+    offsetReg      = (pagina - 1) * limite
+
+    Set rsBloqueos = ListarBloqueos(conn, fImei, fTipo, fRazon, fDesde, fHasta, limite, offsetReg)
 End If
 
 ' Arrays para los desplegables (el recordset es forward-only, no admite MoveFirst)
@@ -77,6 +85,18 @@ rsRazones.Close
 ' Token CSRF para el formulario de desbloqueo
 Dim tokenDesbloqueo
 tokenDesbloqueo = GenerarTokenCsrf()
+
+Function UrlPagina(nuevaPagina, nuevoLimite)
+    Dim qs
+    qs = "buscado=1"
+    If EsCadenaNoVacia(fImei)  Then qs = qs & "&imei="       & Server.URLEncode(fImei)
+    If EsCadenaNoVacia(fTipo)  Then qs = qs & "&tipo="       & Server.URLEncode(fTipo)
+    If EsCadenaNoVacia(fRazon) Then qs = qs & "&razon="      & Server.URLEncode(fRazon)
+    If EsCadenaNoVacia(fDesde) Then qs = qs & "&fechaDesde=" & Server.URLEncode(fDesde)
+    If EsCadenaNoVacia(fHasta) Then qs = qs & "&fechaHasta=" & Server.URLEncode(fHasta)
+    qs = qs & "&limite=" & nuevoLimite & "&pagina=" & nuevaPagina
+    UrlPagina = "/modules/bloqueos/bloqueo.asp?" & qs
+End Function
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -94,21 +114,20 @@ tokenDesbloqueo = GenerarTokenCsrf()
 <main class="contenido">
     <h2>Bloqueos</h2>
 
-    <div class="acciones-cabecera">
-        <a href="/modules/bloqueos/bloquear.asp" class="btn btn-primario">Bloquear IMEI</a>
-    </div>
+    <nav class="modulo-nav">
+        <span class="modulo-nav-item activo">Buscar</span>
+        <a href="/modules/bloqueos/bloquear.asp" class="modulo-nav-item">+ Nuevo Bloqueo</a>
+    </nav>
 
-    <form method="post" action="/modules/bloqueos/bloqueo.asp" class="form-busqueda">
-        <fieldset>
-            <legend>Filtros de busqueda</legend>
-            <div class="campo">
-                <label for="imei">IMEI</label>
-                <input type="text" id="imei" name="imei" value="<%= Server.HTMLEncode(fImei) %>" maxlength="15" placeholder="15 digitos">
+    <form method="get" action="/modules/bloqueos/bloqueo.asp" class="formulario-busqueda" onsubmit="return validarFiltros(this)">
+        <input type="hidden" name="buscado" value="1">
+        <div class="formulario-fila">
+            <label>IMEI
+                <input type="text" name="imei" value="<%= Server.HTMLEncode(fImei) %>" maxlength="15" placeholder="15 digitos">
                 <% If errImei <> "" Then %><span class="error-campo"><%= Server.HTMLEncode(errImei) %></span><% End If %>
-            </div>
-            <div class="campo">
-                <label for="tipo">Tipo de bloqueo</label>
-                <select id="tipo" name="tipo">
+            </label>
+            <label>Tipo de bloqueo
+                <select name="tipo">
                     <option value="">-- Todos --</option>
                     <%
                     Dim clTipo
@@ -119,10 +138,9 @@ tokenDesbloqueo = GenerarTokenCsrf()
                     Next
                     %>
                 </select>
-            </div>
-            <div class="campo">
-                <label for="razon">Razon</label>
-                <select id="razon" name="razon">
+            </label>
+            <label>Razon
+                <select name="razon">
                     <option value="">-- Todas --</option>
                     <%
                     Dim clRazon
@@ -133,23 +151,62 @@ tokenDesbloqueo = GenerarTokenCsrf()
                     Next
                     %>
                 </select>
-            </div>
-            <div class="campo">
-                <label for="fechaDesde">Fecha inclusion desde</label>
-                <input type="text" id="fechaDesde" name="fechaDesde" value="<%= Server.HTMLEncode(fDesde) %>" maxlength="10" placeholder="dd/mm/aaaa">
-            </div>
-            <div class="campo">
-                <label for="fechaHasta">Fecha inclusion hasta</label>
-                <input type="text" id="fechaHasta" name="fechaHasta" value="<%= Server.HTMLEncode(fHasta) %>" maxlength="10" placeholder="dd/mm/aaaa">
-                <% If errFecha <> "" Then %><span class="error-campo"><%= Server.HTMLEncode(errFecha) %></span><% End If %>
-            </div>
-        </fieldset>
-        <div class="acciones-form">
+            </label>
+            <label>Registros
+                <select name="limite">
+                    <option value="25"<% If limite = 25 Then Response.Write " selected" %>>25</option>
+                    <option value="100"<% If limite = 100 Then Response.Write " selected" %>>100</option>
+                    <option value="1000"<% If limite = 1000 Then Response.Write " selected" %>>1000</option>
+                </select>
+            </label>
+        </div>
+        <div class="formulario-fila">
+            <label>Fecha inclusion desde
+                <input type="date" name="fechaDesde" value="<%= Server.HTMLEncode(fDesde) %>">
+            </label>
+            <label>Fecha inclusion hasta
+                <input type="date" name="fechaHasta" value="<%= Server.HTMLEncode(fHasta) %>">
+            </label>
+        </div>
+        <div id="aviso-filtro" class="flash-info" hidden style="margin-top:.5rem">
+            Indica al menos un criterio de b&uacute;squeda. Puedes usar <strong>Fecha inclusion desde</strong> para listar bloqueos por fecha.
+        </div>
+        <div class="formulario-fila">
             <button type="submit" class="btn btn-primario">Buscar</button>
         </div>
     </form>
+    <script>
+    function validarFiltros(f) {
+        var textos = ['imei','fechaDesde','fechaHasta'];
+        for (var i = 0; i < textos.length; i++) {
+            if (f[textos[i]].value.trim() !== '') { document.getElementById('aviso-filtro').hidden = true; return true; }
+        }
+        document.getElementById('aviso-filtro').hidden = false;
+        return false;
+    }
+    </script>
 
-    <% If busquedaRealizada And Not hayErrores Then %>
+    <% If buscado And Not hayErrores Then %>
+
+    <div class="paginacion">
+        <span class="paginacion-info">
+            <%= totalRegistros %> resultado<% If totalRegistros <> 1 Then Response.Write "s" %>
+            &mdash; P&aacute;gina <%= pagina %> de <%= totalPaginas %>
+        </span>
+        <nav class="paginacion-nav" aria-label="Paginaci&oacute;n">
+            <% If pagina > 1 Then %>
+            <a href="<%= UrlPagina(pagina - 1, limite) %>" class="paginacion-link">&larr; Anterior</a>
+            <% Else %>
+            <span class="paginacion-link deshabilitado">&larr; Anterior</span>
+            <% End If %>
+            <% If pagina < totalPaginas Then %>
+            <a href="<%= UrlPagina(pagina + 1, limite) %>" class="paginacion-link">Siguiente &rarr;</a>
+            <% Else %>
+            <span class="paginacion-link deshabilitado">Siguiente &rarr;</span>
+            <% End If %>
+        </nav>
+    </div>
+
     <%
     If rsBloqueos.EOF Then
     %>

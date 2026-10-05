@@ -171,6 +171,29 @@ End Function
         </nav>
     </div>
 
+    <details class="debug-sql">
+        <summary>Ver consulta SQL generada</summary>
+        <p><strong>ContarFicheros</strong> (calcula el total para la paginaci&oacute;n):</p>
+        <pre><%= Server.HTMLEncode(UltimaSqlContarFicheros) %></pre>
+        <ol>
+        <% Dim diCF
+        For diCF = 0 To UBound(UltimaParamsContarFicheros)
+        %>
+            <li><code><%= Server.HTMLEncode(TextoDebugParametro(UltimaParamsContarFicheros(diCF))) %></code></li>
+        <% Next %>
+        </ol>
+        <p><strong>BuscarFicheros</strong> (trae las filas de la pagina actual):</p>
+        <pre><%= Server.HTMLEncode(UltimaSqlFicheros) %></pre>
+        <ol>
+        <% Dim diF
+        For diF = 0 To UBound(UltimaParamsFicheros)
+        %>
+            <li><code><%= Server.HTMLEncode(TextoDebugParametro(UltimaParamsFicheros(diF))) %></code></li>
+        <% Next %>
+        </ol>
+        <p class="ayuda-campo">Los <code>?</code> son los marcadores reales que recibe el driver ODBC; los valores de la lista son los que se enlazan a cada uno, en orden. No es una concatenacion de texto — asi se evita la inyeccion SQL y la ambiguedad de formato de fecha.</p>
+    </details>
+
     <table class="tabla-datos">
     <thead>
     <tr><th>Nombre</th><th>Operador</th><th>Tipo</th><th>Fecha de creacion</th><th>Incidencias</th></tr>

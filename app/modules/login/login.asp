@@ -22,7 +22,7 @@ mensajeError = Request.QueryString("error")
     <form method="post" action="/modules/login/login_do.asp" autocomplete="off">
         <input type="hidden" name="csrf" value="<%= Server.HTMLEncode(token) %>">
         <label for="usuario">Usuario</label>
-        <input type="text" id="usuario" name="usuario" maxlength="15" required autofocus>
+        <input type="text" id="usuario" name="usuario" maxlength="50" required autofocus>
         <label for="password">Contraseña</label>
         <input type="password" id="password" name="password" maxlength="100" required>
         <button type="submit">Entrar</button>

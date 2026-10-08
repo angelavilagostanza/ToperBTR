@@ -33,6 +33,12 @@ atributoReadonly = SiVerdadero(soloLecturaCliente, " readonly", "")
 <!--#include virtual="/include/layout/menu.asp"-->
 <main class="contenido">
     <h2>Nueva solicitud &mdash; <%= Server.HTMLEncode(tituloTipo) %></h2>
+
+    <nav class="modulo-nav">
+        <a href="/modules/solicitudes/consulta.asp" class="modulo-nav-item">Buscar</a>
+        <span class="modulo-nav-item activo">+ Nueva solicitud</span>
+    </nav>
+
     <p>IMEI: <strong><%= Server.HTMLEncode(Session("Sol_Imei")) %></strong></p>
     <% If EsCadenaNoVacia(errorMsg) Then %>
     <p class="flash-error"><%= Server.HTMLEncode(errorMsg) %></p>

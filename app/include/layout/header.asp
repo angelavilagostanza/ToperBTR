@@ -29,6 +29,9 @@ End Select
     <% If Session("Autenticado") = True Then %>
     <div class="cabecera-cuenta">
         <span class="cabecera-usuario"><%= Server.HTMLEncode(Session("CodUsuario")) %></span>
+        <% If EsCadenaNoVacia(Session("NombrePerfil")) Then %>
+        <span class="cabecera-rol"><%= Server.HTMLEncode(Session("NombrePerfil")) %></span>
+        <% End If %>
         <div class="cabecera-cuenta-sep" aria-hidden="true"></div>
         <a href="/modules/usuarios/cambio_password.asp" class="cabecera-icono" title="Cambiar contraseña">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

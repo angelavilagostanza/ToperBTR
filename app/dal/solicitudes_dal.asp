@@ -162,11 +162,6 @@ Function CrearSolicitudCompleta(conn, tipoClave, imei, msisdn, numDenuncia, fech
     Set CrearSolicitudCompleta = resultado
 End Function
 
-' Ultima consulta ejecutada por BuscarSolicitudes/ContarSolicitudes, guardada solo para
-' poder pintarla en pantalla y analizarla (ver consulta.asp).
-Dim UltimaSqlSolicitudes, UltimaParamsSolicitudes
-Dim UltimaSqlContarSolicitudes, UltimaParamsContarSolicitudes
-
 Function BuscarSolicitudes(conn, filtroCodSolicitud, filtroImei, filtroMsisdn, filtroTipo, filtroEstado, filtroIdentCliente, filtroNombreCliente, filtroFechaDesde, filtroFechaHasta, limite, offset)
     Dim sql, listaParams(), n
     sql = "SELECT CAST(S.COD_INDICE_SOL AS CHAR) AS INDICE_SOLICITUD, S.COD_SOLICITUD, T.DESCRIPCION AS TIPO, S.IMEI, S.MSISDN, S.FECHA_CREACION, " & _
@@ -223,10 +218,6 @@ Function BuscarSolicitudes(conn, filtroCodSolicitud, filtroImei, filtroMsisdn, f
     End If
 
     sql = sql & " ORDER BY S.FECHA_CREACION DESC LIMIT " & CLng(offset) & ", " & CLng(limite)
-
-    UltimaSqlSolicitudes = sql
-    UltimaParamsSolicitudes = listaParams
-
     Set BuscarSolicitudes = EjecutarConsulta(conn, sql, listaParams)
 End Function
 
@@ -283,9 +274,6 @@ Function ContarSolicitudes(conn, filtroCodSolicitud, filtroImei, filtroMsisdn, f
         sql = sql & " AND S.FECHA_CREACION < ?"
         ReDim Preserve listaParams(n) : listaParams(n) = DateAdd("d", 1, CDate(filtroFechaHasta)) : n = n + 1
     End If
-
-    UltimaSqlContarSolicitudes = sql
-    UltimaParamsContarSolicitudes = listaParams
 
     Set rs = EjecutarConsulta(conn, sql, listaParams)
     ContarSolicitudes = CLng(rs("N"))

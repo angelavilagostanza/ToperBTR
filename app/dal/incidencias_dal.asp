@@ -5,11 +5,6 @@
 ' si los rangos de ID de solicitud y de fichero coincidian por casualidad. Aqui se corrige
 ' con LEFT JOIN discriminando el TIPO_OBJETO dentro de la propia condicion de join (no en
 ' el WHERE), asi cada incidencia solo casa con la tabla que le corresponde de verdad.
-' Ultima consulta ejecutada por BuscarIncidencias/ContarIncidencias, guardada solo para
-' poder pintarla en pantalla y analizarla (ver buscar.asp).
-Dim UltimaSqlIncidencias, UltimaParamsIncidencias
-Dim UltimaSqlContarIncidencias, UltimaParamsContarIncidencias
-
 Function BuscarIncidencias(conn, filtroCodIncidencia, filtroTipo, filtroEstado, filtroOperador, filtroCodSolicitud, filtroNombreFichero, filtroFechaDesde, filtroFechaHasta, limite, offset)
     Dim sql, listaParams(), n
     sql = "SELECT CAST(I.COD_IND_INCIDENCIA AS CHAR) AS COD_IND_INCIDENCIA, I.COD_INCIDENCIA, I.FECHA_CREACION, I.FECHA_RESOLUCION, " & _
@@ -61,10 +56,6 @@ Function BuscarIncidencias(conn, filtroCodIncidencia, filtroTipo, filtroEstado, 
     End If
 
     sql = sql & " ORDER BY I.FECHA_CREACION DESC LIMIT " & CLng(offset) & ", " & CLng(limite)
-
-    UltimaSqlIncidencias = sql
-    UltimaParamsIncidencias = listaParams
-
     Set BuscarIncidencias = EjecutarConsulta(conn, sql, listaParams)
 End Function
 
@@ -115,9 +106,6 @@ Function ContarIncidencias(conn, filtroCodIncidencia, filtroTipo, filtroEstado, 
         sql = sql & " AND I.FECHA_CREACION < ?"
         ReDim Preserve listaParams(n) : listaParams(n) = DateAdd("d", 1, CDate(filtroFechaHasta)) : n = n + 1
     End If
-
-    UltimaSqlContarIncidencias = sql
-    UltimaParamsContarIncidencias = listaParams
 
     Set rs = EjecutarConsulta(conn, sql, listaParams)
     ContarIncidencias = CLng(rs("N"))

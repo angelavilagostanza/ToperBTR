@@ -110,7 +110,7 @@ End Function
 <main class="contenido">
     <h2>Ficheros</h2>
 
-    <form method="get" action="/modules/ficheros/buscar.asp" class="formulario-busqueda">
+    <form method="get" action="/modules/ficheros/buscar.asp" class="formulario-busqueda" onsubmit="return validarFiltros(this)">
         <input type="hidden" name="buscado" value="1">
         <div class="formulario-fila">
             <label>Nombre de fichero (exacto) <input type="text" name="nombreFichero" maxlength="11" value="<%= Server.HTMLEncode(fNombre) %>"></label>
@@ -145,10 +145,23 @@ End Function
             <label>Creacion desde <input type="date" name="fechaDesde" value="<%= Server.HTMLEncode(fDesde) %>"></label>
             <label>Creacion hasta <input type="date" name="fechaHasta" value="<%= Server.HTMLEncode(fHasta) %>"></label>
         </div>
+        <div id="aviso-filtro" class="flash-info" hidden style="margin-top:.5rem">
+            Indica al menos un criterio de b&uacute;squeda. Puedes usar <strong>Creaci&oacute;n desde</strong> para listar ficheros por fecha.
+        </div>
         <div class="formulario-fila">
             <button type="submit">Filtrar</button>
         </div>
     </form>
+    <script>
+    function validarFiltros(f) {
+        var textos = ['nombreFichero','fechaDesde','fechaHasta'];
+        for (var i = 0; i < textos.length; i++) {
+            if (f[textos[i]].value.trim() !== '') { document.getElementById('aviso-filtro').hidden = true; return true; }
+        }
+        document.getElementById('aviso-filtro').hidden = false;
+        return false;
+    }
+    </script>
 
     <% If buscado Then %>
 
@@ -170,29 +183,6 @@ End Function
             <% End If %>
         </nav>
     </div>
-
-    <details class="debug-sql">
-        <summary>Ver consulta SQL generada</summary>
-        <p><strong>ContarFicheros</strong> (calcula el total para la paginaci&oacute;n):</p>
-        <pre><%= Server.HTMLEncode(UltimaSqlContarFicheros) %></pre>
-        <ol>
-        <% Dim diCF
-        For diCF = 0 To UBound(UltimaParamsContarFicheros)
-        %>
-            <li><code><%= Server.HTMLEncode(TextoDebugParametro(UltimaParamsContarFicheros(diCF))) %></code></li>
-        <% Next %>
-        </ol>
-        <p><strong>BuscarFicheros</strong> (trae las filas de la pagina actual):</p>
-        <pre><%= Server.HTMLEncode(UltimaSqlFicheros) %></pre>
-        <ol>
-        <% Dim diF
-        For diF = 0 To UBound(UltimaParamsFicheros)
-        %>
-            <li><code><%= Server.HTMLEncode(TextoDebugParametro(UltimaParamsFicheros(diF))) %></code></li>
-        <% Next %>
-        </ol>
-        <p class="ayuda-campo">Los <code>?</code> son los marcadores reales que recibe el driver ODBC; los valores de la lista son los que se enlazan a cada uno, en orden. No es una concatenacion de texto — asi se evita la inyeccion SQL y la ambiguedad de formato de fecha.</p>
-    </details>
 
     <table class="tabla-datos">
     <thead>

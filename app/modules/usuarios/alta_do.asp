@@ -22,8 +22,8 @@ codPerfil = Request.Form("perfil")
 Dim errorMsg
 errorMsg = ""
 
-If Not (EsCadenaNoVacia(usuario) And LongitudEntre(usuario, 1, 15)) Then
-    errorMsg = "El login es obligatorio (maximo 15 caracteres)."
+If Not (EsCadenaNoVacia(usuario) And LongitudEntre(usuario, 1, 50)) Then
+    errorMsg = "El login es obligatorio (maximo 50 caracteres)."
 ElseIf Not EsCadenaNoVacia(nombre) Or Not EsCadenaNoVacia(apellidos) Then
     errorMsg = "Nombre y apellidos son obligatorios."
 ElseIf Not IsNumeric(codPerfil) Then

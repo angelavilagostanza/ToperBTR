@@ -13,11 +13,6 @@
 ' nombre de fichero, no una decision de diseno nueva de ToperBTR - se preserva porque asi
 ' es como EIRControl nombra los ficheros hoy y no se puede cambiar sin tocar EIRControl
 ' (fuera de alcance).
-' Ultima consulta ejecutada por BuscarFicheros/ContarFicheros, guardada solo para
-' poder pintarla en pantalla y analizarla (ver buscar.asp).
-Dim UltimaSqlFicheros, UltimaParamsFicheros
-Dim UltimaSqlContarFicheros, UltimaParamsContarFicheros
-
 Function ContarFicheros(conn, filtroNombre, filtroTipo, filtroOperador, filtroFechaDesde, filtroFechaHasta, esAdministrador)
     Dim sql, listaParams(), n, codFicheroGenerico, rs
     codFicheroGenerico = ValorParametroEntero(conn, "COD_FICHERO_GENERICO", 0)
@@ -67,9 +62,6 @@ Function ContarFicheros(conn, filtroNombre, filtroTipo, filtroOperador, filtroFe
         Case "C" : sql = sql & " AND LENGTH(F.NOMBRE) = 7"
         Case "E" : sql = sql & " AND LENGTH(F.NOMBRE) = 11"
     End Select
-
-    UltimaSqlContarFicheros = sql
-    UltimaParamsContarFicheros = listaParams
 
     Set rs = EjecutarConsulta(conn, sql, listaParams)
     ContarFicheros = CLng(rs("N"))
@@ -145,10 +137,6 @@ Function BuscarFicheros(conn, filtroNombre, filtroTipo, filtroOperador, filtroFe
     End Select
 
     sql = sql & " ORDER BY F.FECHA_CREACION DESC LIMIT " & CLng(offset) & ", " & CLng(limite)
-
-    UltimaSqlFicheros = sql
-    UltimaParamsFicheros = listaParams
-
     Set BuscarFicheros = EjecutarConsulta(conn, sql, listaParams)
 End Function
 
@@ -170,6 +158,29 @@ Function ObtenerFicheroPorNombre(conn, nombre)
         f.Add "Ruta", rs("RUTA") & ""
         f.Add "FechaCreacion", rs("FECHA_CREACION")
         Set ObtenerFicheroPorNombre = f
+    End If
+    rs.Close
+End Function
+
+' Igual que ObtenerFicheroPorNombre pero sobre EjecutarConsultaTx (no redirige a
+' /errors/error.asp ante un fallo SQL) - para el endpoint sin sesion de navegador
+' app/externos/intercambio/descargar.asp, que necesita controlar el 100% de su
+' respuesta HTTP el mismo (ver NuevaConexionTx en conexion.asp).
+Function ObtenerFicheroPorNombreTx(conn, nombre)
+    Dim rs, f
+    Set rs = EjecutarConsultaTx(conn, _
+        "SELECT COD_FICHERO, NOMBRE, EXTENSION, RUTA, FECHA_CREACION FROM FICHEROS WHERE NOMBRE = ?", _
+        Array(nombre))
+    If rs.EOF Then
+        Set ObtenerFicheroPorNombreTx = Nothing
+    Else
+        Set f = Server.CreateObject("Scripting.Dictionary")
+        f.Add "CodFichero", CLng(rs("COD_FICHERO"))
+        f.Add "NombreFichero", rs("NOMBRE") & ""
+        f.Add "Extension", rs("EXTENSION") & ""
+        f.Add "Ruta", rs("RUTA") & ""
+        f.Add "FechaCreacion", rs("FECHA_CREACION")
+        Set ObtenerFicheroPorNombreTx = f
     End If
     rs.Close
 End Function

@@ -34,6 +34,19 @@ Function CodigoPerfil(conn, nombrePerfil)
     rs.Close
 End Function
 
+' Inverso de CodigoPerfil - usado para mostrar el nombre del rol del usuario conectado
+' en la cabecera (ver login_do.asp/header.asp), que solo tiene el COD_PERFIL en sesion.
+Function NombrePerfil(conn, codPerfil)
+    Dim rs
+    Set rs = EjecutarConsultaTx(conn, "SELECT NOMBRE FROM PERFIL_REF WHERE COD_PERFIL = ?", Array(codPerfil))
+    If rs.EOF Then
+        NombrePerfil = ""
+    Else
+        NombrePerfil = rs("NOMBRE") & ""
+    End If
+    rs.Close
+End Function
+
 Function CodigoEstadoUsuario(conn, descripcion)
     Dim rs
     Set rs = EjecutarConsultaTx(conn, "SELECT ESTADO FROM ESTADO_USUARIO_REF WHERE DESCRIPCION = ?", Array(descripcion))

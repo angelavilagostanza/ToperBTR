@@ -1,7 +1,7 @@
 <%
 Function BuscarUsuarios(conn, filtroLogin, filtroNombre, filtroApellidos, filtroPerfil, filtroEstado, limite, offsetReg)
     Dim sql, listaParams(), n
-    sql = "SELECT U.COD_INDICE_USUARIO, U.COD_USUARIO, U.NOMBRE, U.APELLIDOS, U.COD_PERFIL, P.NOMBRE AS NOMBRE_PERFIL, U.ESTADO, E.DESCRIPCION AS DESCRIPCION_ESTADO " & _
+    sql = "SELECT U.COD_INDICE_USUARIO, U.COD_USUARIO, U.NOMBRE, U.APELLIDOS, U.COD_PERFIL, P.NOMBRE AS NOMBRE_PERFIL, U.ESTADO, E.DESCRIPCION AS DESCRIPCION_ESTADO, U.FECHA_ALTA, U.FECHA_ULTIMA_CONEXION " & _
           "FROM USUARIOS U " & _
           "INNER JOIN PERFIL_REF P ON U.COD_PERFIL = P.COD_PERFIL " & _
           "INNER JOIN ESTADO_USUARIO_REF E ON U.ESTADO = E.ESTADO " & _
@@ -98,6 +98,15 @@ Sub CrearUsuario(conn, codUsuario, nombre, apellidos, hashPassword, algoritmo, f
         "INSERT INTO USUARIOS (COD_USUARIO, NOMBRE, APELLIDOS, PASSWORD, ALGORITMO_PASSWORD, FECHA_CADUCIDAD, FECHA_ALTA, NUM_FALLOS, FECHA_ULTIMA_CONEXION, ESTADO, COD_PERFIL, COD_OPERADOR) " & _
         "VALUES (?, ?, ?, ?, ?, ?, NOW(), 0, NULL, ?, ?, ?)", _
         Array(codUsuario, nombre, apellidos, hashPassword, algoritmo, fechaCaducidad, codEstadoActivo, codPerfil, codOperador))
+End Sub
+
+' Edicion de datos basicos (no toca login, password ni estado - cada uno de esos tiene
+' su propio flujo ya existente: alta fija el login para siempre, reset_password_admin.asp
+' cambia la contrasena, accion_ejecutar.asp cambia el estado).
+Sub ActualizarDatosUsuario(conn, codIndiceUsuario, nombre, apellidos, codPerfil)
+    Call EjecutarNonQuery(conn, _
+        "UPDATE USUARIOS SET NOMBRE = ?, APELLIDOS = ?, COD_PERFIL = ? WHERE COD_INDICE_USUARIO = ?", _
+        Array(nombre, apellidos, codPerfil, codIndiceUsuario))
 End Sub
 
 ' Baja y desbloqueo se aplican SIEMPRE en lote (aunque sea un unico elemento), reproduciendo

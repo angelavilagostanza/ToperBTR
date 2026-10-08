@@ -134,6 +134,7 @@ Function IntentarLogin(conn, codUsuario, passwordPlano)
     resultado("Nombre") = nombre
     resultado("Apellidos") = apellidos
     resultado("CodPerfil") = codPerfil
+    resultado("NombrePerfil") = NombrePerfil(conn, codPerfil)
     resultado("CodOperador") = codOperador
     resultado("AccionesPermitidas") = AccionesPermitidas(conn, codPerfil)
 

@@ -27,6 +27,30 @@ Function NuevaConexion()
     Set NuevaConexion = conn
 End Function
 
+' Variante sin redirigir, para endpoints sin sesion de navegador (ver
+' app/externos/intercambio/descargar.asp) donde la respuesta HTTP debe quedar bajo
+' control completo del propio script, nunca de /errors/error.asp (pensado para HTML).
+' Devuelve Nothing si no se pudo abrir; el detalle tecnico se manda igualmente al log
+' de IIS, nunca al llamador.
+Function NuevaConexionTx()
+    Dim conn
+    Set conn = Server.CreateObject("ADODB.Connection")
+    conn.ConnectionString = Application("DBConnectionString")
+    conn.ConnectionTimeout = 10
+
+    On Error Resume Next
+    conn.Open
+    If Err.Number <> 0 Then
+        Response.AppendToLog " ToperBTR_ErrorConexionBD=" & Err.Number & ":" & Err.Description
+        On Error Goto 0
+        Set NuevaConexionTx = Nothing
+        Exit Function
+    End If
+    On Error Goto 0
+
+    Set NuevaConexionTx = conn
+End Function
+
 Function TipoAdoParaValor(valor)
     Select Case VarType(valor)
         Case 2, 3, 17 ' vbInteger, vbLong, vbByte

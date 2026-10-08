@@ -93,12 +93,16 @@ End Function
 <!--#include virtual="/include/layout/menu.asp"-->
 <main class="contenido">
     <h2>Usuarios</h2>
-    <p><a href="/modules/usuarios/alta.asp">Dar de alta un usuario nuevo</a></p>
+
+    <nav class="modulo-nav">
+        <span class="modulo-nav-item activo">Buscar</span>
+        <a href="/modules/usuarios/alta.asp" class="modulo-nav-item">+ Nuevo usuario</a>
+    </nav>
 
     <form method="get" action="/modules/usuarios/listar.asp" class="formulario-busqueda">
 		<div class="formulario-fila">
         <label>Login
-            <input type="text" name="login" maxlength="15" value="<%= Server.HTMLEncode(filtroLogin) %>">
+            <input type="text" name="login" maxlength="50" value="<%= Server.HTMLEncode(filtroLogin) %>">
         </label>
         <label>Nombre
             <input type="text" name="nombre" maxlength="50" value="<%= Server.HTMLEncode(filtroNombre) %>">
@@ -158,7 +162,7 @@ End Function
 		</div>
         <table class="tabla-datos">
         <thead>
-        <tr><th></th><th>Login</th><th>Nombre</th><th>Apellidos</th><th>Perfil</th><th>Estado</th><th></th></tr>
+        <tr><th></th><th>Login</th><th>Nombre</th><th>Apellidos</th><th>Perfil</th><th>Estado</th><th>Fecha Alta</th><th>Ultima conexion</th><th></th><th></th></tr>
         </thead>
         <tbody>
         <% Do While Not rsUsuarios.EOF 
@@ -171,12 +175,22 @@ End Function
 			<td><%= Server.HTMLEncode(rsUsuarios("APELLIDOS") & "") %></td>
 			<td><%= Server.HTMLEncode(rsUsuarios("NOMBRE_PERFIL") & "") %></td>
 			<td><%= Server.HTMLEncode(rsUsuarios("DESCRIPCION_ESTADO") & "") %></td>
+			<td><%= SiVerdadero(IsDate(rsUsuarios("FECHA_ALTA")), rsUsuarios("FECHA_ALTA"), "&mdash;") %></td>
+			<td><%= SiVerdadero(IsDate(rsUsuarios("FECHA_ULTIMA_CONEXION")), rsUsuarios("FECHA_ULTIMA_CONEXION"), "&mdash;") %></td>
             <td>
                 <a href="/modules/usuarios/reset_password_admin.asp?cod=<%= rsUsuarios("COD_INDICE_USUARIO") %>" class="cabecera-icono" title="Cambiar contraseña">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <circle cx="8" cy="15" r="4"/><path d="M12 11l7-7m-3 0l3 3"/>
                     </svg>
                     <span class="cabecera-icono-label">Cambiar contrasena</span>
+                </a>
+            </td>
+            <td>
+                <a href="/modules/usuarios/editar.asp?cod=<%= rsUsuarios("COD_INDICE_USUARIO") %>" class="cabecera-icono" title="Modificar usuario">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                    <span class="cabecera-icono-label">Modificar</span>
                 </a>
             </td>
         </tr>

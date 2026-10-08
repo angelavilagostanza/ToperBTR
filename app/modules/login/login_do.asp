@@ -45,6 +45,7 @@ Session("CodUsuario") = resultado("CodUsuario")
 Session("Nombre") = resultado("Nombre")
 Session("Apellidos") = resultado("Apellidos")
 Session("CodPerfil") = resultado("CodPerfil")
+Session("NombrePerfil") = resultado("NombrePerfil")
 Session("CodOperador") = resultado("CodOperador")
 Session("AccionesPermitidas") = resultado("AccionesPermitidas")
 

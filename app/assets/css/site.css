@@ -132,7 +132,12 @@ body {
     margin: 0 .25rem;
 }
 
-.cabecera-usuario { font-weight: 600; margin-right: .25rem; }
+.cabecera-usuario { font-weight: 600; }
+
+/* Sin margen propio entre usuario y rol: el espaciado lo da el gap de .cabecera-cuenta,
+   igual que entre "Contraseña" y "Salir". El margen extra antes del separador se mueve
+   aqui (antes lo tenia .cabecera-usuario) para mantener igual el hueco antes del "|". */
+.cabecera-rol { color: #666; margin-right: .25rem; }
 
 .cabecera-cuenta a { color: var(--carbon); text-decoration: none; }
 
@@ -240,6 +245,15 @@ body {
 
 .formulario-vertical { display: flex; flex-direction: column; gap: 1rem; max-width: 420px; }
 
+/* Modificador opcional para formularios verticales que agrupan campos de 2 en 2 por
+   carril (ver usuarios/alta.asp) - mas ancho que el formulario-vertical de una sola
+   columna, y reparte el ancho a partes iguales entre los campos de cada formulario-fila. */
+.formulario-dos-columnas { max-width: 816px; } /* 640px + 70%, luego -25% */
+
+.formulario-dos-columnas .formulario-fila { margin-bottom: 0; align-items: flex-start; }
+
+.formulario-dos-columnas .formulario-fila > label { flex: 1; min-width: 0; }
+
 .formulario-vertical label { display: flex; flex-direction: column; font-size: .9rem; }
 
 .formulario-busqueda input, .formulario-busqueda select,
@@ -345,25 +359,6 @@ body {
     margin-top: .3rem;
     font-size: .78rem;
     color: #777;
-}
-
-.debug-sql {
-    margin-bottom: 1rem;
-    padding: .75rem 1rem;
-    background: #fafafa;
-    border: 1px solid var(--gris-borde);
-    border-radius: 4px;
-    font-size: .85rem;
-}
-
-.debug-sql pre {
-    white-space: pre-wrap;
-    word-break: break-word;
-    background: var(--blanco);
-    border: 1px solid var(--gris-borde);
-    border-radius: 4px;
-    padding: .6rem .75rem;
-    font-size: .8rem;
 }
 
 .acciones-form {

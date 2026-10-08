@@ -29,6 +29,12 @@ Set rsTipos = ListarTiposSolicitud(conn)
 <!--#include virtual="/include/layout/menu.asp"-->
 <main class="contenido">
     <h2>Nueva solicitud</h2>
+
+    <nav class="modulo-nav">
+        <a href="/modules/solicitudes/consulta.asp" class="modulo-nav-item">Buscar</a>
+        <span class="modulo-nav-item activo">+ Nueva solicitud</span>
+    </nav>
+
     <% If EsCadenaNoVacia(errorMsg) Then %>
     <p class="flash-error"><%= Server.HTMLEncode(errorMsg) %></p>
     <% End If %>

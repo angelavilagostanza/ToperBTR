@@ -27,13 +27,17 @@ Function ClaseSiActiva(carpeta)
 End Function
 
 ' Codigos leidos de Application (cargados en global.asa): 0 queries de BD por pagina.
-Dim puedeSolicitudes, puedeFicheros, puedeIncidencias, puedeAdmin, puedeUsuarios, puedeBloqueos
+Dim puedeSolicitudes, puedeFicheros, puedeIncidencias, puedeAdmin, puedeUsuarios, puedeBloqueos, puedeAuditoria
 puedeSolicitudes = TienePermiso(accionesSesion, CodigoAccionCacheado("LECTURA_SOLICITUDES"))
 puedeFicheros    = TienePermiso(accionesSesion, CodigoAccionCacheado("LECTURA_FICHEROS"))
 puedeIncidencias = TienePermiso(accionesSesion, CodigoAccionCacheado("LECTURA_INCIDENCIAS"))
 puedeAdmin       = TienePermiso(accionesSesion, CodigoAccionCacheado("ADMINISTRADOR"))
 puedeUsuarios    = (perfilSesion = CodigoPerfilCacheado("Seguridad"))
 puedeBloqueos    = (perfilSesion = CodigoPerfilCacheado("Administrador") Or perfilSesion = CodigoPerfilCacheado("Tramitación"))
+' Decision de negocio (2026-10-08): Auditoria acompaña a Usuarios, mismo perfil
+' Seguridad - no hace falta un perfil nuevo dedicado (se descarto el perfil
+' "Auditoria" que se habia planteado al principio).
+puedeAuditoria   = puedeUsuarios
 %>
 <nav class="menu-lateral">
 <ul>
@@ -94,7 +98,7 @@ puedeBloqueos    = (perfilSesion = CodigoPerfilCacheado("Administrador") Or perf
     </li>
     <% End If %>
 
-    <% If puedeUsuarios Or puedeAdmin Then %>
+    <% If puedeUsuarios Or puedeAdmin Or puedeAuditoria Then %>
     <li class="menu-grupo-label" aria-hidden="true">Administración</li>
     <% End If %>
 
@@ -116,6 +120,17 @@ puedeBloqueos    = (perfilSesion = CodigoPerfilCacheado("Administrador") Or perf
                 <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
             </svg>
             Parámetros
+        </a>
+    </li>
+    <% End If %>
+
+    <% If puedeAuditoria Then %>
+    <li<%= ClaseSiActiva("auditoria") %>>
+        <a href="/modules/auditoria/buscar.asp">
+            <svg class="menu-icono" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            Auditoría
         </a>
     </li>
     <% End If %>

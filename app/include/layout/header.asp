@@ -45,6 +45,8 @@ End Select
             </svg>
             <span class="cabecera-icono-label">Salir</span>
         </a>
+        <div class="cabecera-cuenta-sep" aria-hidden="true"></div>
+        <img src="/images/Logo_Orange-Master_Logo_RGB.png" alt="Orange" class="cabecera-logo-orange">
     </div>
     <% End If %>
 </header>

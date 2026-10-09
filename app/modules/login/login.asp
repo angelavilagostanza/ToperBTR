@@ -27,6 +27,10 @@ mensajeError = Request.QueryString("error")
         <input type="password" id="password" name="password" maxlength="100" required>
         <button type="submit">Entrar</button>
     </form>
+    <div class="login-orange-pie">
+        <img src="/images/Logo_Orange-Master_Logo_RGB.png" alt="Orange" class="login-logo-orange">
+        <span>Una aplicaci&oacute;n de Orange Espa&ntilde;a</span>
+    </div>
 </div>
 </body>
 </html>

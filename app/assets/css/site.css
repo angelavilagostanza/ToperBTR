@@ -1,5 +1,5 @@
 :root {
-    --naranja: #ff9933;
+    --naranja: #ff7900;
     --naranja-oscuro: #e0801a;
     --carbon: #222222;
     --gris-fondo: #f7f7f5;
@@ -52,6 +52,24 @@ body {
     color: #2a2929;
     letter-spacing: .08em;
     text-transform: uppercase;
+}
+
+.login-orange-pie {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gris-borde);
+    font-size: .72rem;
+    color: #777;
+}
+
+.login-logo-orange {
+    display: block;
+    height: 25px;
+    width: 25px;
 }
 
 .caja-login label { display: block; margin-top: 1rem; font-size: .9rem; color: var(--carbon); }
@@ -117,9 +135,11 @@ body {
 
 .cabecera-marca { display: flex; flex-direction: row; align-items: center; gap: .75rem; }
 
-.cabecera-logo { display: block; }
+.cabecera-logo { display: block; height: 31px; } /* alto nativo del PNG - fijado para que el logo de Orange pueda calcularse como % de este valor sin depender del render por defecto */
 
 .cabecera-tagline { font-size: .6rem; color: #2a2929; letter-spacing: .08em; text-transform: uppercase; }
+
+.cabecera-logo-orange { display: block; height: 25px; width: 25px; }
 
 .cabecera-mensaje { flex: 1; text-align: center; font-size: .9rem; }
 

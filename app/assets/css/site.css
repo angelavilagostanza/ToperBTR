@@ -1,7 +1,11 @@
 :root {
     --naranja: #ff7900;
     --naranja-oscuro: #e0801a;
-    --carbon: #222222;
+    /* Mas suave que --naranja a proposito: el botón de login usa el naranja corporativo
+       de Orange (--naranja), pero los botones de formulario (Guardar/Confirmar/Filtrar)
+       se quedan con el tono anterior, mas suave, por decision explicita del usuario. */
+    --naranja-boton-formulario: #ff9933;
+    --carbon: #1a1a1a;
     --gris-fondo: #f7f7f5;
     --gris-borde: #e0e0e0;
     --blanco: #ffffff;
@@ -63,7 +67,7 @@ body {
     padding-top: 1rem;
     border-top: 1px solid var(--gris-borde);
     font-size: .72rem;
-    color: #777;
+    color: #666;
 }
 
 .login-logo-orange {
@@ -157,7 +161,7 @@ body {
 /* Sin margen propio entre usuario y rol: el espaciado lo da el gap de .cabecera-cuenta,
    igual que entre "Contraseña" y "Salir". El margen extra antes del separador se mueve
    aqui (antes lo tenia .cabecera-usuario) para mantener igual el hueco antes del "|". */
-.cabecera-rol { color: #666; margin-right: .25rem; }
+.cabecera-rol { color: #555; margin-right: .25rem; }
 
 .cabecera-cuenta a { color: var(--carbon); text-decoration: none; }
 
@@ -165,7 +169,7 @@ body {
     display: flex;
     align-items: center;
     gap: .35rem;
-    color: #555;
+    color: #444;
     padding: .3rem .6rem;
     border-radius: 4px;
     border: 1px solid transparent;
@@ -232,7 +236,7 @@ body {
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
-    color: #aaa;
+    color: #888;
     user-select: none;
 }
 
@@ -240,7 +244,7 @@ body {
 
 .contenido h2 { margin-top: 0; }
 
-.pie { text-align: center; padding: 1rem; color: #777; font-size: .8rem; background: var(--blanco); border-top: 1px solid var(--gris-borde); }
+.pie { text-align: center; padding: 1rem; color: #666; font-size: .8rem; background: var(--blanco); border-top: 1px solid var(--gris-borde); }
 
 .formulario-busqueda {
     display: block;
@@ -294,7 +298,7 @@ body {
 }
 
 .contenido button, .contenido a.boton {
-    background: var(--naranja);
+    background: var(--naranja-boton-formulario);
     color: var(--blanco);
     border: none;
     padding: .55rem 1.1rem;
@@ -378,7 +382,7 @@ body {
 .ayuda-campo {
     margin-top: .3rem;
     font-size: .78rem;
-    color: #777;
+    color: #666;
 }
 
 .acciones-form {
@@ -401,7 +405,7 @@ body {
     transition: background .15s;
 }
 
-.btn-primario { background: var(--naranja); color: var(--blanco); }
+.btn-primario { background: var(--naranja-boton-formulario); color: var(--blanco); }
 .btn-primario:hover { background: var(--naranja-oscuro); }
 
 .btn-peligro { background: #c0392b; color: var(--blanco); }
@@ -421,7 +425,7 @@ body {
     flex-wrap: wrap;
 }
 
-.paginacion-info { color: #555; }
+.paginacion-info { color: #444; }
 
 .paginacion-nav { display: flex; gap: .35rem; }
 
@@ -452,7 +456,7 @@ body {
 
 .home-intro p {
     margin: .4rem 0 0;
-    color: #555;
+    color: #444;
     font-size: .95rem;
 }
 
@@ -489,7 +493,7 @@ body {
 
 .indice-card-titulo { font-weight: 600; font-size: .92rem; }
 
-.indice-card-desc { font-size: .82rem; color: #666; line-height: 1.45; }
+.indice-card-desc { font-size: .82rem; color: #555; line-height: 1.45; }
 
 /* --- Navegación de módulo (tabs con subrayado) --- */
 
@@ -510,7 +514,7 @@ body {
     font-family: inherit;
     cursor: pointer;
     text-decoration: none;
-    color: #888;
+    color: #777;
     background: transparent;
     border: none;
     border-radius: 0;

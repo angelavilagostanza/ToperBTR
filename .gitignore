@@ -12,3 +12,7 @@ FicherosBTR/
 # Basura habitual de SO/editor
 Thumbs.db
 .DS_Store
+
+# Instaladores sueltos (drivers, redistribuibles) - no son codigo, no van al repo.
+*.msi
+*.exe

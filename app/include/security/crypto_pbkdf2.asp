@@ -52,38 +52,44 @@ Const HEX_CHARS = "0123456789abcdef"
 ' Double no negativo, rango [0, 4294967295]).
 ' ---------------------------------------------------------------------------
 
-' Double sin signo -> Long con signo, misma huella de bits (complemento a dos).
-Function U2S(ByVal x)
-    If x >= 2147483648 Then
-        U2S = CLng(x - 4294967296)
-    Else
-        U2S = CLng(x)
-    End If
-End Function
-
-' Long con signo -> Double sin signo, misma huella de bits.
-Function S2U(ByVal x)
-    If x < 0 Then
-        S2U = CDbl(x) + 4294967296
-    Else
-        S2U = CDbl(x)
-    End If
-End Function
-
+' BAnd32/BOr32/BXor32/BNot32 convierten Double sin signo -> Long con signo (misma huella
+' de bits, complemento a dos), aplican el operador nativo de VBScript (que si opera bien
+' sobre los 32 bits de un Long) y deshacen la conversion. Antes esto se apoyaba en dos
+' funciones auxiliares U2S/S2U; se ha dejado la conversion en linea (duplicada en las 4
+' funciones) porque son, con diferencia, las funciones mas llamadas de todo el fichero
+' (varios miles de veces por login con 200 iteraciones de PBKDF2) y cada llamada a
+' funcion en VBScript tiene su propio coste fijo - eliminar 3 llamadas de por medio en
+' cada una es la optimizacion de mayor impacto de todo el fichero. Se valido que el
+' resultado es identico antes/despues con la misma bateria de vectores NIST/RFC + .NET.
 Function BAnd32(ByVal a, ByVal b)
-    BAnd32 = S2U(U2S(a) And U2S(b))
+    Dim sa, sb, r
+    If a >= 2147483648 Then sa = CLng(a - 4294967296) Else sa = CLng(a)
+    If b >= 2147483648 Then sb = CLng(b - 4294967296) Else sb = CLng(b)
+    r = sa And sb
+    If r < 0 Then BAnd32 = CDbl(r) + 4294967296 Else BAnd32 = CDbl(r)
 End Function
 
 Function BOr32(ByVal a, ByVal b)
-    BOr32 = S2U(U2S(a) Or U2S(b))
+    Dim sa, sb, r
+    If a >= 2147483648 Then sa = CLng(a - 4294967296) Else sa = CLng(a)
+    If b >= 2147483648 Then sb = CLng(b - 4294967296) Else sb = CLng(b)
+    r = sa Or sb
+    If r < 0 Then BOr32 = CDbl(r) + 4294967296 Else BOr32 = CDbl(r)
 End Function
 
 Function BXor32(ByVal a, ByVal b)
-    BXor32 = S2U(U2S(a) Xor U2S(b))
+    Dim sa, sb, r
+    If a >= 2147483648 Then sa = CLng(a - 4294967296) Else sa = CLng(a)
+    If b >= 2147483648 Then sb = CLng(b - 4294967296) Else sb = CLng(b)
+    r = sa Xor sb
+    If r < 0 Then BXor32 = CDbl(r) + 4294967296 Else BXor32 = CDbl(r)
 End Function
 
 Function BNot32(ByVal a)
-    BNot32 = S2U(Not U2S(a))
+    Dim sa, r
+    If a >= 2147483648 Then sa = CLng(a - 4294967296) Else sa = CLng(a)
+    r = Not sa
+    If r < 0 Then BNot32 = CDbl(r) + 4294967296 Else BNot32 = CDbl(r)
 End Function
 
 ' Suma modulo 2^32 (equivalente al add32(...) variadico del JScript original). VBScript
@@ -98,12 +104,30 @@ Function Add32_2(ByVal a, ByVal b)
     Add32_2 = s
 End Function
 
+' Misma reduccion en linea que en los BAnd32/BOr32/... de arriba, por el mismo motivo:
+' evitar 3-4 llamadas a funcion de por medio en una de las operaciones mas repetidas.
 Function Add32_4(ByVal a, ByVal b, ByVal c, ByVal d)
-    Add32_4 = Add32_2(Add32_2(Add32_2(a, b), c), d)
+    Dim s
+    s = a + b
+    If s >= 4294967296 Then s = s - 4294967296
+    s = s + c
+    If s >= 4294967296 Then s = s - 4294967296
+    s = s + d
+    If s >= 4294967296 Then s = s - 4294967296
+    Add32_4 = s
 End Function
 
 Function Add32_5(ByVal a, ByVal b, ByVal c, ByVal d, ByVal e)
-    Add32_5 = Add32_2(Add32_2(Add32_2(Add32_2(a, b), c), d), e)
+    Dim s
+    s = a + b
+    If s >= 4294967296 Then s = s - 4294967296
+    s = s + c
+    If s >= 4294967296 Then s = s - 4294967296
+    s = s + d
+    If s >= 4294967296 Then s = s - 4294967296
+    s = s + e
+    If s >= 4294967296 Then s = s - 4294967296
+    Add32_5 = s
 End Function
 
 ' Desplazamiento logico a la derecha. x/2^n es exacto en coma flotante (dividir por
@@ -391,10 +415,11 @@ Function Sha256Bytes(ByRef msgBytes)
     For chunk = 0 To numChunks - 1
         For i = 0 To 15
             j = chunk * 64 + i * 4
-            w(i) = ShiftLeft32(padded(j), 24)
-            w(i) = BOr32(w(i), ShiftLeft32(padded(j + 1), 16))
-            w(i) = BOr32(w(i), ShiftLeft32(padded(j + 2), 8))
-            w(i) = BOr32(w(i), padded(j + 3))
+            ' Cada byte (0-255) ocupa un carril de 8 bits disjunto una vez colocado en su
+            ' posicion (multiplo de 256) - sumarlos por aritmetica equivale exactamente a
+            ' desplazar+OR (no puede haber acarreo entre carriles), y evita 3 llamadas a
+            ' ShiftLeft32/BOr32 por cada word de entrada.
+            w(i) = padded(j) * 16777216 + padded(j + 1) * 65536 + padded(j + 2) * 256 + padded(j + 3)
         Next
         For i = 16 To 63
             sig0 = BXor32(BXor32(RotR32(w(i - 15), 7), RotR32(w(i - 15), 18)), ShiftRight32(w(i - 15), 3))
@@ -444,10 +469,11 @@ Function Sha1Bytes(ByRef msgBytes)
     For chunk = 0 To numChunks - 1
         For i = 0 To 15
             j = chunk * 64 + i * 4
-            w(i) = ShiftLeft32(padded(j), 24)
-            w(i) = BOr32(w(i), ShiftLeft32(padded(j + 1), 16))
-            w(i) = BOr32(w(i), ShiftLeft32(padded(j + 2), 8))
-            w(i) = BOr32(w(i), padded(j + 3))
+            ' Cada byte (0-255) ocupa un carril de 8 bits disjunto una vez colocado en su
+            ' posicion (multiplo de 256) - sumarlos por aritmetica equivale exactamente a
+            ' desplazar+OR (no puede haber acarreo entre carriles), y evita 3 llamadas a
+            ' ShiftLeft32/BOr32 por cada word de entrada.
+            w(i) = padded(j) * 16777216 + padded(j + 1) * 65536 + padded(j + 2) * 256 + padded(j + 3)
         Next
         For i = 16 To 79
             w(i) = RotL32(BXor32(BXor32(BXor32(w(i - 3), w(i - 8)), w(i - 14)), w(i - 16)), 1)

@@ -66,11 +66,11 @@ Function UrlPagina(nuevaPagina, nuevoLimite)
     End If
 
     If EsCadenaNoVacia(filtroPerfil) Then
-        qs = qs & "&perfil=" & filtroPerfil
+        qs = qs & "&perfil=" & Server.URLEncode(filtroPerfil)
     End If
 
     If EsCadenaNoVacia(filtroEstado) Then
-        qs = qs & "&estado=" & filtroEstado
+        qs = qs & "&estado=" & Server.URLEncode(filtroEstado)
     End If
 
     UrlPagina = "/modules/usuarios/listar.asp?" & qs

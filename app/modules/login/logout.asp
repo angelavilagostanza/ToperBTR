@@ -8,5 +8,7 @@ If Session("Autenticado") = True Then
     Set connLogout = Nothing
 End If
 Session.Abandon
+Response.Cookies("ToperBTR_Fp") = ""
+Response.Cookies("ToperBTR_Fp").Expires = DateAdd("d", -1, Now())
 Response.Redirect "/modules/login/login.asp"
 %>

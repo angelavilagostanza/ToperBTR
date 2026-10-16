@@ -5,10 +5,21 @@
 ' su primer login con el nuevo servidor (o cuando los hashes DB se restablezcan a 200 iter).
 Server.ScriptTimeout = 360
 
-Dim csrfRecibido, codUsuario, password
+Dim csrfRecibido, codUsuario, password, ipCliente
 csrfRecibido = Request.Form("csrf")
 codUsuario = Trim(Request.Form("usuario"))
 password = Request.Form("password")
+ipCliente = Request.ServerVariables("REMOTE_ADDR")
+
+' Limite de intentos por IP (hallazgo A2) - independiente del bloqueo por cuenta de
+' IntentarLogin: sin esto, alguien podria probar muchas cuentas distintas (o la misma con
+' contrasenas distintas) desde la misma IP sin que ninguna cuenta concreta llegase nunca
+' a su propio umbral de bloqueo. Se comprueba antes que nada, incluso antes del CSRF, para
+' frenar cuanto antes una peticion que viene de una IP ya penalizada.
+If Not PermiteIntentoLoginIP(ipCliente) Then
+    Response.Redirect "/modules/login/login.asp?error=" & Server.URLEncode("Demasiados intentos desde esta conexion. Espere unos minutos e intentelo de nuevo.")
+    Response.End
+End If
 
 If Not TokenCsrfValido(csrfRecibido) Then
     Response.Redirect "/modules/login/login.asp?error=" & Server.URLEncode("La sesion del formulario ha expirado, intentelo de nuevo.")
@@ -30,6 +41,7 @@ conn.Close
 Set conn = Nothing
 
 If Not resultado("Exito") Then
+    Call RegistrarFalloLoginIP(ipCliente)
     Response.Redirect "/modules/login/login.asp?error=" & Server.URLEncode(resultado("Mensaje"))
     Response.End
 End If

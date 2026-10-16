@@ -1,17 +1,6 @@
 <%
-' Ademas de Session("Autenticado"), exige que la cookie ToperBTR_Fp (HttpOnly, fijada en
-' login_do.asp) coincida con Session("Fingerprint"). Esto es lo que de verdad impide que
-' un ASPSESSIONID robado via XSS sirva para suplantar la sesion: el atacante puede copiar
-' el ASPSESSIONID (no tiene HttpOnly, limitacion de ASP clasico), pero nunca pudo leer el
-' valor de ToperBTR_Fp con JavaScript, asi que no puede reenviarlo. Una sesion sin huella
-' valida (incluida cualquier sesion ya abierta antes de este cambio) se trata como no
-' autenticada y se fuerza a volver a iniciar sesion.
 Sub RequiereSesion()
-    Dim fpCookie, fpSesion
-    fpCookie = "" & Request.Cookies("ToperBTR_Fp")
-    fpSesion = "" & Session("Fingerprint")
-    If Not (Session("Autenticado") = True) Or fpSesion = "" Or fpCookie <> fpSesion Then
-        Session.Abandon
+    If Not (Session("Autenticado") = True) Then
         Response.Redirect "/modules/login/login.asp"
         Response.End
     End If

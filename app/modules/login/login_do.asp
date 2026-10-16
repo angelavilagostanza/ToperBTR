@@ -38,7 +38,7 @@ End If
 ' tras login) porque en ASP clasico Session.Abandon destruye el estado al FINAL de esta
 ' misma peticion, incluido lo que se escriba despues en el mismo request - se perderia
 ' todo lo que fijamos a continuacion. Limitacion conocida y aceptada del modelo de sesion
-' de ASP clasico/IIS; mitigada con timeout corto y cookie de sesion HttpOnly/Secure.
+' de ASP clasico/IIS; mitigada con timeout corto y la cookie ToperBTRFp de abajo.
 Session("Autenticado") = True
 Session("CodIndiceUsuario") = resultado("CodIndiceUsuario")
 Session("CodUsuario") = resultado("CodUsuario")
@@ -48,6 +48,25 @@ Session("CodPerfil") = resultado("CodPerfil")
 Session("NombrePerfil") = resultado("NombrePerfil")
 Session("CodOperador") = resultado("CodOperador")
 Session("AccionesPermitidas") = resultado("AccionesPermitidas")
+
+' ASP clasico no permite marcar la cookie automatica ASPSESSIONID... como HttpOnly (esa
+' opcion no existe en IIS para ASP clasico, solo para ASP.NET), asi que esa cookie sigue
+' siendo legible por JavaScript. Para que un robo de ASPSESSIONID via XSS no sirva para
+' suplantar la sesion, se exige ademas esta segunda cookie HttpOnly, con un valor
+' aleatorio que se valida en cada peticion (RequiereSesion, autorizacion.asp) contra
+' Session("Fingerprint") - un atacante que solo robe el ASPSESSIONID nunca podra leer
+' (ni por tanto reenviar) esta cookie.
+' NOTA: Response.Cookies(...).HttpOnly NO esta soportado en este servidor (error 438
+' "Object doesn't support this property or method", confirmado en pruebas en pre) - se
+' construye la cabecera Set-Cookie a mano con Response.AddHeader, que no depende de esa
+' propiedad del objeto Cookie.
+Session("Fingerprint") = GenerarTokenAleatorio(32)
+Dim cabeceraFp
+cabeceraFp = "ToperBTRFp=" & Session("Fingerprint") & "; Path=/; HttpOnly"
+If UCase(Request.ServerVariables("HTTPS")) = "ON" Then
+    cabeceraFp = cabeceraFp & "; Secure"
+End If
+Response.AddHeader "Set-Cookie", cabeceraFp
 
 Response.Redirect "/modules/home/home.asp"
 Response.End

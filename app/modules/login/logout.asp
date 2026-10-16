@@ -8,5 +8,6 @@ If Session("Autenticado") = True Then
     Set connLogout = Nothing
 End If
 Session.Abandon
+Response.AddHeader "Set-Cookie", "ToperBTRFp=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
 Response.Redirect "/modules/login/login.asp"
 %>

@@ -604,33 +604,65 @@ Function ComparacionSegura(ByVal a, ByVal b)
     ComparacionSegura = (diff = 0)
 End Function
 
-' Generador de aleatoriedad 100% nativo (sin dependencias externas): Rnd() no es
-' criptograficamente fuerte, pero aqui solo hace falta que la sal sea UNICA por
-' contrasena (no secreta) para anular tablas rainbow, y el token CSRF se refuerza
-' pasandolo por SHA-256 junto con reloj+valores aleatorios adicionales. Si en el
-' futuro se dispone de un generador mas fuerte, sustituir aqui.
+' Hallazgo de seguridad M3: antes la aleatoriedad salia de Rnd() de VBScript (un PRNG
+' predecible, no criptografico), mezclando Now()/Timer()/Rnd() y pasandolo por SHA-256.
+' Esa mitigacion tiene un limite real: pasar una entrada de poca entropia por una funcion
+' hash no anade entropia que no estuviera ya ahi, solo la revuelve - si alguien acota la
+' hora del servidor (la cabecera HTTP Date se la da gratis) y el rango de Timer(), el
+' espacio a probar para reproducir un token deja de ser astronomico.
+'
+' Se sustituye por Scriptlet.TypeLib.Guid: genera un GUID v4 real (formato de Windows,
+' CoCreateGuid) que usa el generador criptografico del sistema operativo por debajo
+' (~122 bits de entropia real por GUID, los otros 6 bits son fijos de version/variante).
+' Verificado en este proyecto que SI funciona desde VBScript puro (a diferencia de
+' CAPICOM.Utilities, no disponible en el servidor, y de
+' System.Security.Cryptography.RNGCryptoServiceProvider via COM, cuyo objeto se crea
+' pero el metodo GetBytes falla siempre desde VBScript con error 5 "argumento o llamada
+' a procedimiento no validos" - el mismo patron de "parece disponible pero no funciona
+' de verdad" que Response.Cookies.HttpOnly en el hallazgo A5).
+Function GuidAleatorio()
+    Dim tl
+    Set tl = CreateObject("Scriptlet.TypeLib")
+    GuidAleatorio = tl.Guid
+End Function
+
+' 2 GUIDs (no 1) por margen: aunque un GUID ya tiene entropia de sobra, concatenar dos
+' no cuesta nada y deja margen frente a cualquier duda futura sobre la implementacion
+' exacta de CoCreateGuid en una version de Windows distinta.
+Function EntropiaFuerte()
+    EntropiaFuerte = Utf8Bytes(GuidAleatorio() & GuidAleatorio())
+End Function
+
+' Expande la entropia de EntropiaFuerte() a exactamente n bytes mediante SHA-256 en modo
+' contador (bloque_i = SHA256(entropia & i), concatenados y truncados a n) - una tecnica
+' estandar de expansion de claves, necesaria porque SHA-256 solo da 32 bytes por llamada
+' y aqui se piden desde 6 bytes (placeholder de solicitud) hasta 32 (CSRF/huella de
+' sesion/sal de password).
 Function BytesAleatorios(ByVal n)
-    Dim bytes(), i
+    Dim entropia, outArr(), pos, contador, bloque, k
     If n <= 0 Then
         BytesAleatorios = Array()
         Exit Function
     End If
-    ReDim bytes(n - 1)
-    Randomize
-    For i = 0 To n - 1
-        bytes(i) = Int(Rnd() * 256)
-    Next
-    BytesAleatorios = bytes
+
+    entropia = EntropiaFuerte()
+    ReDim outArr(n - 1)
+    pos = 0
+    contador = 0
+    Do While pos < n
+        contador = contador + 1
+        bloque = Sha256Bytes(ConcatBytes(entropia, Utf8Bytes(CStr(contador))))
+        For k = 0 To UBound(bloque)
+            If pos >= n Then Exit For
+            outArr(pos) = bloque(k)
+            pos = pos + 1
+        Next
+    Loop
+    BytesAleatorios = outArr
 End Function
 
 Function GenerarTokenAleatorio(ByVal numBytes)
-    Dim semillaStr, semilla, mezclaEntrada, mezcla
-    Randomize
-    semillaStr = CStr(Now()) & "|" & CStr(Timer()) & "|" & CStr(Rnd()) & "|" & CStr(Rnd())
-    semilla = Utf8Bytes(semillaStr)
-    mezclaEntrada = ConcatBytes(semilla, BytesAleatorios(numBytes))
-    mezcla = Sha256Bytes(mezclaEntrada)
-    GenerarTokenAleatorio = Left(ToHex(mezcla), numBytes * 2)
+    GenerarTokenAleatorio = ToHex(BytesAleatorios(numBytes))
 End Function
 
 Function CalcularSha1Base64(ByVal password)

@@ -34,6 +34,23 @@ If fichero Is Nothing Then
     Response.End
 End If
 
+' Hallazgo A3: el perfil Tercero (operador externo) solo debe poder descargar los
+' ficheros de SU PROPIO operador. Antes nada lo impedia aqui (solo se comprobaba
+' LECTURA_FICHEROS, el mismo permiso que tienen varios perfiles internos a los que si les
+' corresponde ver los de todos los operadores). Se trata igual que "no encontrado" (mismo
+' mensaje, no revela que el fichero existe) pero se audita con un motivo distinto para
+' dejar trazado internamente el intento. "RECHAZADO_OPERADOR" (18 caracteres) cabe en
+' AUDITORIA_ACCION.resultado VARCHAR(20) - ver docs/12 sobre el mismo limite.
+If Session("CodPerfil") = CodigoPerfil(conn, "Tercero") Then
+    If Not FicheroPerteneceAOperador(conn, fichero("NombreFichero"), Session("CodOperador")) Then
+        Call RegistrarAuditoria(conn, Session("CodIndiceUsuario"), "FICHERO_DESCARGA", "FICHEROS", fichero("CodFichero"), "RECHAZADO_OPERADOR", "Nombre solicitado: " & nombreSolicitado)
+        conn.Close
+        Set conn = Nothing
+        Response.Redirect "/errors/error.asp?msg=ficheronoencontrado"
+        Response.End
+    End If
+End If
+
 Dim rutaCompleta, nombreDescarga
 nombreDescarga = fichero("NombreFichero")
 If EsCadenaNoVacia(fichero("Extension")) Then nombreDescarga = nombreDescarga & "." & fichero("Extension")

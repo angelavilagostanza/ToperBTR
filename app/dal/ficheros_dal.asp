@@ -184,4 +184,37 @@ Function ObtenerFicheroPorNombreTx(conn, nombre)
     End If
     rs.Close
 End Function
+
+' El perfil Tercero (operador externo) tiene LECTURA_FICHEROS pero debe ver/descargar
+' UNICAMENTE los ficheros de su propio operador (hallazgo de seguridad A3: antes nada lo
+' impedia, el filtro "operador" del buscador era de libre eleccion y descargar.asp no
+' comprobaba en absoluto a que operador pertenecia el fichero). Misma regla de
+' clave/nombre que ya usan BuscarFicheros/ContarFicheros para filtrar por operador -
+' Yoigo/Grupo MASMOVIL/GMM es un caso especial porque su feed EIR no lleva su clave en
+' el nombre, usa "EIR" en su lugar.
+Function FicheroPerteneceAOperador(conn, nombreFichero, codOperador)
+    Dim rsOp, nombreOp, claveOp, esGMM
+    FicheroPerteneceAOperador = False
+
+    Set rsOp = EjecutarConsultaTx(conn, "SELECT NOMBRE, CLAVE FROM OPERADOR_REF WHERE COD_OPERADOR = ?", Array(CLng(codOperador)))
+    If rsOp.EOF Then
+        rsOp.Close
+        Exit Function
+    End If
+    nombreOp = rsOp("NOMBRE") & ""
+    claveOp  = rsOp("CLAVE") & ""
+    rsOp.Close
+
+    If Not EsCadenaNoVacia(claveOp) Then Exit Function
+
+    esGMM = (StrComp(nombreOp, "Yoigo",          vbTextCompare) = 0 Or _
+             StrComp(nombreOp, "Grupo MASMOVIL",  vbTextCompare) = 0 Or _
+             StrComp(nombreOp, "GMM",             vbTextCompare) = 0)
+
+    If esGMM Then
+        FicheroPerteneceAOperador = (InStr(1, nombreFichero, claveOp, 1) > 0) Or (InStr(1, nombreFichero, "EIR", 1) > 0)
+    Else
+        FicheroPerteneceAOperador = (InStr(1, nombreFichero, claveOp, 1) > 0)
+    End If
+End Function
 %>

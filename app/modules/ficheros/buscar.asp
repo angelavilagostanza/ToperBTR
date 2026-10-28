@@ -5,8 +5,9 @@ Dim conn
 Set conn = NuevaConexion()
 Call RequiereAccion(conn, CodigoAccion(conn, "LECTURA_FICHEROS"))
 
-Dim esAdministrador, puedeVerIncidencias
+Dim esAdministrador, puedeVerIncidencias, esTercero
 esAdministrador     = (Session("CodPerfil") = CodigoPerfil(conn, "Administrador"))
+esTercero           = (Session("CodPerfil") = CodigoPerfil(conn, "Tercero"))
 ' El perfil Tercero tiene LECTURA_FICHEROS pero no LECTURA_INCIDENCIAS (matriz real
 ' confirmada, ver docs/04-matriz-permisos.md) - no se enlaza a Incidencias si no puede
 ' entrar, para no ofrecer un enlace que acabaria en la pagina de "sin permiso".
@@ -21,6 +22,12 @@ fOperador = Request.QueryString("operador")
 fDesde    = Trim(Request.QueryString("fechaDesde"))
 fHasta    = Trim(Request.QueryString("fechaHasta"))
 buscado   = (Request.QueryString("buscado") = "1")
+
+' Hallazgo A3: el perfil Tercero (operador externo) solo debe ver ficheros de su PROPIO
+' operador - antes el filtro "operador" era de libre eleccion incluso para este perfil.
+' Se fuerza en servidor con Session("CodOperador"), ignorando lo que llegue por URL (el
+' desplegable del formulario tambien se deshabilita mas abajo, pero el gate real es este).
+If esTercero Then fOperador = CStr(Session("CodOperador"))
 
 ' Gate servidor: tipo EIR solo para Administrador aunque llegue en el QueryString
 If UCase(fTipo & "") = "E" And Not esAdministrador Then fTipo = ""
@@ -125,10 +132,14 @@ End Function
                 </select>
             </label>
             <label>Operador
-                <select name="operador">
+                <select name="operador"<% If esTercero Then Response.Write " disabled" %>>
+                    <% If Not esTercero Then %>
                     <option value="-1">Todos los operadores</option>
+                    <% End If %>
                     <% Do While Not rsOperadores.EOF %>
+                    <% If Not esTercero Or CStr(rsOperadores("COD_OPERADOR")) = fOperador Then %>
                     <option value="<%= rsOperadores("COD_OPERADOR") %>"<% If CStr(fOperador) = CStr(rsOperadores("COD_OPERADOR")) Then Response.Write " selected" %>><%= Server.HTMLEncode(rsOperadores("NOMBRE")) %></option>
+                    <% End If %>
                     <% rsOperadores.MoveNext
                     Loop %>
                 </select>

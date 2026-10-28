@@ -141,9 +141,18 @@ Function CrearSolicitudCompleta(conn, tipoClave, imei, msisdn, numDenuncia, fech
 
     If huboError Then
 
-		resultado("Mensaje") = _
-			"Err=" & Err.Number & _
-			" Desc=" & Err.Description
+        ' Hallazgo de seguridad M2: antes se devolvia "Err=<numero> Desc=<descripcion>"
+        ' (el detalle crudo de ODBC/MySQL - motor, version, nombres reales de tabla y
+        ' restriccion, a veces el propio valor que provoco el conflicto) directamente al
+        ' navegador via resultado("Mensaje") -> alta_do.asp -> Response.Redirect. Es el
+        ' unico punto del codigo que no sigue la misma regla que RedirigirSiErrorSQL
+        ' (conexion.asp): el detalle tecnico va siempre al log de IIS, nunca al navegador.
+        Dim numeroErrorSol, descripcionErrorSol
+        numeroErrorSol = Err.Number
+        descripcionErrorSol = Err.Description
+        Response.AppendToLog " ToperBTR_ErrorSQL=" & numeroErrorSol & ":" & descripcionErrorSol & " en CrearSolicitudCompleta"
+
+        resultado("Mensaje") = MensajeErrorGenerico()
 
 		conn.RollbackTrans
 		On Error Goto 0

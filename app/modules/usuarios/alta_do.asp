@@ -22,8 +22,19 @@ codPerfil = Request.Form("perfil")
 Dim errorMsg
 errorMsg = ""
 
-If Not (EsCadenaNoVacia(usuario) And LongitudEntre(usuario, 1, 50)) Then
-    errorMsg = "El login es obligatorio (maximo 50 caracteres)."
+' Hallazgo de seguridad M1: antes solo se exigia longitud, sin restringir que caracteres
+' podia contener el login - permitia dar de alta un usuario con "<"/">"/comillas en el
+' login, que luego se escribia SIN escapar en un comentario HTML de usuarios/listar.asp
+' (Response.Write de depuracion, ya eliminado), lo que permitia a un administrador de
+' Seguridad inyectar JavaScript que se ejecutaba en el navegador de OTRO administrador de
+' Seguridad al abrir ese listado (XSS almacenado). El patron de abajo solo admite los
+' caracteres habituales de un login/email (se amplio a 50 caracteres pensando en que el
+' login fuera un email - commit 84f413e - pero la validacion de formato email en si sigue
+' pendiente como tarea aparte, ver memoria del proyecto); basta para que el login nunca
+' pueda contener "<", ">", comillas ni espacios, cerrando el vector de raiz ademas de
+' quitar el Response.Write que lo exponia.
+If Not (EsCadenaNoVacia(usuario) And LongitudEntre(usuario, 1, 50) And CumpleFormato(usuario, "^[A-Za-z0-9._%+@-]+$")) Then
+    errorMsg = "El login es obligatorio (maximo 50 caracteres; solo letras, numeros, y . _ % + @ -)."
 ElseIf Not EsCadenaNoVacia(nombre) Or Not EsCadenaNoVacia(apellidos) Then
     errorMsg = "Nombre y apellidos son obligatorios."
 ElseIf Not IsNumeric(codPerfil) Then

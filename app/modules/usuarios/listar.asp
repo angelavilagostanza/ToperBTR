@@ -165,9 +165,7 @@ End Function
         <tr><th></th><th>Login</th><th>Nombre</th><th>Apellidos</th><th>Perfil</th><th>Estado</th><th>Fecha Alta</th><th>Ultima conexion</th><th></th><th></th></tr>
         </thead>
         <tbody>
-        <% Do While Not rsUsuarios.EOF 
-			Response.Write "<!-- Usuario: " & rsUsuarios("COD_USUARIO") & " -->"
-		%>
+        <% Do While Not rsUsuarios.EOF %>
         <tr>
             <td><input type="checkbox" name="seleccion" value="<%= rsUsuarios("COD_INDICE_USUARIO") %>"></td>
             <td><%= Server.HTMLEncode(rsUsuarios("COD_USUARIO") & "") %></td>

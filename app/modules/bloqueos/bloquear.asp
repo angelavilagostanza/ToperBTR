@@ -61,7 +61,7 @@ tokenCsrf = GenerarTokenCsrf()
 
         <div class="acciones-form">
             <button type="submit" class="btn btn-peligro"
-                onclick="return confirm('&iquest;Confirma el bloqueo del IMEI ' + document.getElementById(\'imei\').value + '?')">
+                onclick="return confirm('&iquest;Confirma el bloqueo del IMEI ' + document.getElementById('imei').value + '?')">
                 Bloquear IMEI
             </button>
             <a href="/modules/bloqueos/bloqueo.asp" class="btn btn-secundario">Cancelar</a>

@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/solicitudes_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequiereAccion(conn, CodigoAccion(conn, "LECTURA_SOLICITUDES"))
@@ -163,7 +166,7 @@ End Function
     <form method="get" action="/modules/solicitudes/consulta.asp" class="formulario-busqueda" onsubmit="return validarFiltros(this)">
         <input type="hidden" name="buscado" value="1">
         <div class="formulario-fila">
-            <label>Codigo <input type="text" name="codSolicitud" maxlength="50" value="<%= Server.HTMLEncode(fCod) %>"></label>
+            <label>C&oacute;digo <input type="text" name="codSolicitud" maxlength="50" value="<%= Server.HTMLEncode(fCod) %>"></label>
             <label>IMEI <input type="text" name="imei" maxlength="50" value="<%= Server.HTMLEncode(fImei) %>"></label>
             <label>MSISDN <input type="text" name="msisdn" maxlength="50" value="<%= Server.HTMLEncode(fMsisdn) %>"></label>
             <label>NIF/CIF cliente <input type="text" name="identCliente" maxlength="50" value="<%= Server.HTMLEncode(fIdent) %>"></label>
@@ -195,8 +198,8 @@ End Function
             </label>
         </div>
         <div class="formulario-fila">
-            <label>Creacion desde <input type="date" name="fechaDesde" value="<%= Server.HTMLEncode(fDesde) %>"></label>
-            <label>Creacion hasta <input type="date" name="fechaHasta" value="<%= Server.HTMLEncode(fHasta) %>"></label>
+            <label>Creaci&oacute;n desde <input type="date" name="fechaDesde" value="<%= Server.HTMLEncode(fDesde) %>"></label>
+            <label>Creaci&oacute;n hasta <input type="date" name="fechaHasta" value="<%= Server.HTMLEncode(fHasta) %>"></label>
         </div>
         <div id="aviso-filtro" class="flash-info" hidden style="margin-top:.5rem">
             Indica al menos un criterio de b&uacute;squeda. Puedes usar <strong>Creaci&oacute;n desde</strong> para listar solicitudes por fecha.
@@ -241,7 +244,7 @@ End Function
     <thead>
     <tr>
         <% If puedeEscribir Then %><th></th><% End If %>
-        <th>Codigo</th><th>Tipo</th><th>IMEI</th><th>MSISDN</th><th>Cliente</th><th>Estado</th><th>Creacion</th>
+        <th>C&oacute;digo</th><th>Tipo</th><th>IMEI</th><th>MSISDN</th><th>Cliente</th><th>Estado</th><th>Creaci&oacute;n</th>
     </tr>
     </thead>
     <tbody>

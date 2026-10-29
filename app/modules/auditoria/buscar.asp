@@ -56,7 +56,7 @@ End Function
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>ToperBTR - Auditoria</title>
+<title>ToperBTR - Auditoría</title>
 <link rel="stylesheet" href="/assets/css/site.css">
 <link rel="icon" href="/images/ToperBTR_favicon.ico" type="image/x-icon">
 </head>
@@ -72,7 +72,7 @@ End Function
         <input type="hidden" name="buscado" value="1">
         <div class="formulario-fila">
             <label>Usuario <input type="text" maxlength="50" name="usuario" value="<%= Server.HTMLEncode(fUsuario) %>"></label>
-            <label>Accion
+            <label>Acción
                 <select name="accion">
                     <option value="">Todas</option>
                     <% Do While Not rsAcciones.EOF %>
@@ -95,7 +95,7 @@ End Function
             <label>Detalle contiene <input type="text" maxlength="100" name="detalle" value="<%= Server.HTMLEncode(fDetalle) %>" placeholder="solo junto a otro filtro"></label>
         </div>
         <div id="aviso-filtro" class="flash-info" hidden style="margin-top:.5rem">
-            Indica al menos un criterio de b&uacute;squeda (Usuario, Accion o fecha). Puedes usar <strong>Fecha desde</strong> para listar la auditor&iacute;a por fecha. El campo <strong>Detalle</strong> solo se aplica junto a otro criterio.
+            Indica al menos un criterio de b&uacute;squeda (Usuario, Acci&oacute;n o fecha). Puedes usar <strong>Fecha desde</strong> para listar la auditor&iacute;a por fecha. El campo <strong>Detalle</strong> solo se aplica junto a otro criterio.
         </div>
         <div class="formulario-fila">
             <button type="submit">Filtrar</button>
@@ -135,7 +135,7 @@ End Function
 
     <table class="tabla-datos">
     <thead>
-    <tr><th>Fecha</th><th>Usuario</th><th>Accion</th><th>Entidad</th><th>Resultado</th><th>Detalle</th><th>IP</th></tr>
+    <tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Entidad</th><th>Resultado</th><th>Detalle</th><th>IP</th></tr>
     </thead>
     <tbody>
     <% If rsAuditoria.EOF Then %>

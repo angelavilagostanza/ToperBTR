@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/incidencias_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequiereAccion(conn, CodigoAccion(conn, "LECTURA_INCIDENCIAS"))
@@ -79,7 +82,7 @@ End Function
     <form method="get" action="/modules/incidencias/buscar.asp" class="formulario-busqueda" onsubmit="return validarFiltros(this)">
         <input type="hidden" name="buscado" value="1">
         <div class="formulario-fila">
-            <label>Codigo <input type="text" maxlength="50" name="codIncidencia" value="<%= Server.HTMLEncode(fCod) %>"></label>
+            <label>Código <input type="text" maxlength="50" name="codIncidencia" value="<%= Server.HTMLEncode(fCod) %>"></label>
             <label>Tipo
                 <select name="tipo">
                     <option value="-1">Todos</option>
@@ -107,7 +110,7 @@ End Function
                     Loop %>
                 </select>
             </label>
-            <label>Codigo solicitud <input type="text" maxlength="50" name="codSolicitud" value="<%= Server.HTMLEncode(fCodSolicitud) %>"></label>
+            <label>Código solicitud <input type="text" maxlength="50" name="codSolicitud" value="<%= Server.HTMLEncode(fCodSolicitud) %>"></label>
             <label>Nombre fichero <input type="text" maxlength="50" name="nombreFichero" value="<%= Server.HTMLEncode(fNombreFichero) %>"></label>
             <label>Registros
                 <select name="limite">
@@ -118,8 +121,8 @@ End Function
             </label>
         </div>
         <div class="formulario-fila">
-            <label>Creacion desde <input type="date" name="fechaDesde" value="<%= Server.HTMLEncode(fDesde) %>"></label>
-            <label>Creacion hasta <input type="date" name="fechaHasta" value="<%= Server.HTMLEncode(fHasta) %>"></label>
+            <label>Creación desde <input type="date" name="fechaDesde" value="<%= Server.HTMLEncode(fDesde) %>"></label>
+            <label>Creación hasta <input type="date" name="fechaHasta" value="<%= Server.HTMLEncode(fHasta) %>"></label>
         </div>
         <div id="aviso-filtro" class="flash-info" hidden style="margin-top:.5rem">
             Indica al menos un criterio de b&uacute;squeda. Puedes usar <strong>Creaci&oacute;n desde</strong> para listar incidencias por fecha.
@@ -162,7 +165,7 @@ End Function
 
     <table class="tabla-datos">
     <thead>
-    <tr><th>Codigo</th><th>Tipo</th><th>Operador</th><th>Estado</th><th>Vinculada a</th><th>Creacion</th></tr>
+    <tr><th>Código</th><th>Tipo</th><th>Operador</th><th>Estado</th><th>Vinculada a</th><th>Creación</th></tr>
     </thead>
     <tbody>
     <% If rsIncidencias.EOF Then %>

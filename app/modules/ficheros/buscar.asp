@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/ficheros_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequiereAccion(conn, CodigoAccion(conn, "LECTURA_FICHEROS"))
@@ -71,7 +74,7 @@ End If
 
 Function EtiquetaTipoFichero(nombre)
     If Len(nombre) < 9 Then
-        EtiquetaTipoFichero = "Consolidacion"
+        EtiquetaTipoFichero = "Consolidación"
     ElseIf InStr(1, nombre, "EIR", 1) > 0 Then
         EtiquetaTipoFichero = "EIR"
     Else
@@ -125,7 +128,7 @@ End Function
                 <select name="tipo">
                     <option value="">Todos</option>
                     <option value="D"<% If UCase(fTipo & "") = "D" Then Response.Write " selected" %>>Diarios</option>
-                    <option value="C"<% If UCase(fTipo & "") = "C" Then Response.Write " selected" %>>Consolidacion</option>
+                    <option value="C"<% If UCase(fTipo & "") = "C" Then Response.Write " selected" %>>Consolidación</option>
                     <% If esAdministrador Then %>
                     <option value="E"<% If UCase(fTipo & "") = "E" Then Response.Write " selected" %>>Ficheros EIR</option>
                     <% End If %>
@@ -153,8 +156,8 @@ End Function
             </label>
         </div>
         <div class="formulario-fila">
-            <label>Creacion desde <input type="date" name="fechaDesde" value="<%= Server.HTMLEncode(fDesde) %>"></label>
-            <label>Creacion hasta <input type="date" name="fechaHasta" value="<%= Server.HTMLEncode(fHasta) %>"></label>
+            <label>Creación desde <input type="date" name="fechaDesde" value="<%= Server.HTMLEncode(fDesde) %>"></label>
+            <label>Creación hasta <input type="date" name="fechaHasta" value="<%= Server.HTMLEncode(fHasta) %>"></label>
         </div>
         <div id="aviso-filtro" class="flash-info" hidden style="margin-top:.5rem">
             Indica al menos un criterio de b&uacute;squeda. Puedes usar <strong>Creaci&oacute;n desde</strong> para listar ficheros por fecha.
@@ -197,7 +200,7 @@ End Function
 
     <table class="tabla-datos">
     <thead>
-    <tr><th>Nombre</th><th>Operador</th><th>Tipo</th><th>Fecha de creacion</th><th>Incidencias</th></tr>
+    <tr><th>Nombre</th><th>Operador</th><th>Tipo</th><th>Fecha de creación</th><th>Incidencias</th></tr>
     </thead>
     <tbody>
     <% If rsFicheros.EOF Then %>

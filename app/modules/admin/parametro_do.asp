@@ -17,7 +17,7 @@ nuevoValor = Trim(Request.Form("valor") & "")
 
 ' La clave no puede llegar vacia: seria un fallo del formulario o manipulacion.
 If Not EsCadenaNoVacia(clave) Then
-    Call EstablecerMensajeFlash("error", "No se ha indicado el parametro a modificar.")
+    Call EstablecerMensajeFlash("error", "No se ha indicado el parámetro a modificar.")
     Response.Redirect "/modules/admin/parametros.asp"
     Response.End
 End If
@@ -31,7 +31,7 @@ Set rsExiste = EjecutarConsulta(conn, _
 
 If rsExiste.EOF Then
     rsExiste.Close
-    Call EstablecerMensajeFlash("error", "El parametro '" & clave & "' no existe. No se pueden crear parametros nuevos desde esta pantalla.")
+    Call EstablecerMensajeFlash("error", "El parámetro '" & clave & "' no existe. No se pueden crear parámetros nuevos desde esta pantalla.")
     Response.Redirect "/modules/admin/parametros.asp"
     Response.End
 End If
@@ -52,7 +52,7 @@ If InStr(1, clavesEnteras, "|" & clave & "|", 1) > 0 Then
     If Not IsNumeric(nuevoValor) Then
         conn.Close
         Set conn = Nothing
-        Call EstablecerMensajeFlash("error", "El parametro '" & clave & "' debe ser un numero entero.")
+        Call EstablecerMensajeFlash("error", "El parámetro '" & clave & "' debe ser un número entero.")
         Response.Redirect "/modules/admin/parametros.asp"
         Response.End
     End If
@@ -70,7 +70,7 @@ Call RegistrarAuditoria(conn, Session("CodIndiceUsuario"), _
 conn.Close
 Set conn = Nothing
 
-Call EstablecerMensajeFlash("ok", "Parametro '" & clave & "' actualizado correctamente.")
+Call EstablecerMensajeFlash("ok", "Parámetro '" & clave & "' actualizado correctamente.")
 Response.Redirect "/modules/admin/parametros.asp"
 Response.End
 %>

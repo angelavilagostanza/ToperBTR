@@ -1,6 +1,20 @@
 <!--#include virtual="/include/bootstrap.asp"-->
 <%
-Call RequiereSesion()
+' Hallazgo B2: hasta ahora el unico permiso comprobado aqui era RequiereSesion() (estar
+' logueado). En la practica esta pagina solo pinta algo util si Session("Sol_Imei") tiene
+' valor, y esa variable SOLO la fija pre_alta_do.asp, que si tiene el guard correcto
+' (RequiereAccion ESCRITURA_SOLICITUDES) - asi que hoy es imposible llegar aqui con datos
+' utiles sin haber pasado por ese control. Pero es una dependencia fragil, no una garantia
+' explicita: si en el futuro algo mas llegara a fijar esa variable de sesion sin pasar por
+' ese control, aqui no habria nada que lo impidiera. Se añade el mismo guard explicito que
+' ya tienen pre_alta.asp/pre_alta_do.asp, por consistencia con el principio ya aplicado en
+' todo el proyecto (docs/04-matriz-permisos.md: "cada operacion sensible comprueba su
+' permiso en el servidor, nunca solo por ocultacion/indireccion").
+Dim conn
+Set conn = NuevaConexion()
+Call RequiereAccion(conn, CodigoAccion(conn, "ESCRITURA_SOLICITUDES"))
+conn.Close
+Set conn = Nothing
 
 If Not EsCadenaNoVacia(Session("Sol_Imei")) Then
     Response.Redirect "/modules/solicitudes/pre_alta.asp"

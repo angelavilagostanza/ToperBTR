@@ -275,9 +275,16 @@ conn.Close
 Set conn = Nothing
 %>
 <script>
-document.getElementById('selTodos').addEventListener('change', function() {
-    document.querySelectorAll('input[name="seleccion"]').forEach(function(cb) {
-        cb.checked = document.getElementById('selTodos').checked;
+// El checkbox #selTodos solo existe cuando hay resultados de busqueda (esta misma pagina
+// se carga sin el, p.ej. al entrar directamente sin buscar nada todavia) - sin esta
+// comprobacion, addEventListener sobre null rompia este script entero (bug detectado al
+// verificar en consola el hallazgo de seguridad M4, pero preexistente a ese cambio).
+var selTodos = document.getElementById('selTodos');
+if (selTodos) {
+    selTodos.addEventListener('change', function() {
+        document.querySelectorAll('input[name="seleccion"]').forEach(function(cb) {
+            cb.checked = selTodos.checked;
+        });
     });
-});
+}
 </script>

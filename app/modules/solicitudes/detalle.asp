@@ -103,7 +103,18 @@ token = GenerarTokenCsrf()
     <% End If %>
 
     <% If numIncidencias > 0 Then %>
-    <p class="flash-info">Esta solicitud tiene <%= numIncidencias %> incidencia(s) asociada(s) (la consulta detallada estara disponible en el Entregable 4).</p>
+    <!-- Enlace inverso al que ya tiene incidencias/detalle.asp e incidencias/buscar.asp
+         hacia la solicitud (TIPO_OBJETO='S'): antes aqui solo se mostraba el contador,
+         con una nota obsoleta ("disponible en el Entregable 4", que ya esta hecho desde
+         hace meses). Una solicitud puede tener varias incidencias (es un COUNT, no un
+         valor unico), asi que el enlace natural es al listado de Incidencias ya filtrado
+         por esta solicitud, reutilizando el filtro codSolicitud que incidencias/buscar.asp
+         ya tenia preparado - sin tocar nada en el lado de Incidencias. Todo perfil con
+         LECTURA_SOLICITUDES tiene siempre LECTURA_INCIDENCIAS (docs/04-matriz-permisos.md),
+         igual que en el caso ya existente de Incidencias->Solicitudes, asi que no hace
+         falta ningun chequeo de permiso adicional antes de mostrar el enlace. -->
+    <p class="flash-info">Esta solicitud tiene <%= numIncidencias %> incidencia(s) asociada(s).
+        <a href="/modules/incidencias/buscar.asp?buscado=1&codSolicitud=<%= Server.URLEncode(sol("CodSolicitud")) %>">Ver incidencias</a></p>
     <% End If %>
 
     <% If puedeEscribir And esCancelable Then %>

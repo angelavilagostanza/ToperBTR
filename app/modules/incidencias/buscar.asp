@@ -176,7 +176,12 @@ End Function
         <td><%= Server.HTMLEncode(rsIncidencias("ESTADO")) %></td>
         <td>
             <% If rsIncidencias("TIPO_OBJETO") = "S" Then %>
-            Solicitud <%= Server.HTMLEncode(rsIncidencias("COD_SOLICITUD") & "") %>
+            <!-- Enlace a la solicitud: O.COD_OBJETO es el mismo S.COD_INDICE_SOL que usa
+                 solicitudes/detalle.asp?cod=..., ya lo trae BuscarIncidencias sin tocar
+                 el DAL. Mismo criterio de permisos que el enlace inverso ya añadido en
+                 solicitudes/detalle.asp: todo perfil con LECTURA_INCIDENCIAS tiene
+                 siempre LECTURA_SOLICITUDES (docs/04-matriz-permisos.md). -->
+            Solicitud <a href="/modules/solicitudes/detalle.asp?cod=<%= rsIncidencias("COD_OBJETO") %>"><%= Server.HTMLEncode(rsIncidencias("COD_SOLICITUD") & "") %></a>
             <% ElseIf rsIncidencias("TIPO_OBJETO") = "F" Then %>
             Fichero <%= Server.HTMLEncode(rsIncidencias("NOMBRE_FICHERO") & "") %>
             <% Else %>

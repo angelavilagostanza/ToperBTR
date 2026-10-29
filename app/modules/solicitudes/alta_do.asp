@@ -18,7 +18,7 @@ imei = Session("Sol_Imei")
 tipoClave = Session("Sol_TipoClave")
 esInclusion = (tipoClave = "I")
 
-Dim msisdn, numDenuncia, fechaRobo, fechaDenuncia, identCliente, nombreCliente, apellido1Cliente, apellido2Cliente
+Dim msisdn, numDenuncia, fechaRobo, fechaDenuncia, identCliente, nombreCliente, apellido1Cliente, apellido2Cliente, enlaceExterno
 msisdn = Trim(Request.Form("msisdn"))
 numDenuncia = Trim(Request.Form("numDenuncia"))
 fechaRobo = Trim(Request.Form("fechaRobo"))
@@ -27,6 +27,7 @@ identCliente = Trim(Request.Form("identCliente"))
 nombreCliente = Trim(Request.Form("nombreCliente"))
 apellido1Cliente = Trim(Request.Form("apellido1Cliente"))
 apellido2Cliente = Trim(Request.Form("apellido2Cliente"))
+enlaceExterno = Trim(Request.Form("enlaceExterno"))
 
 Dim errorMsg
 errorMsg = ""
@@ -36,15 +37,17 @@ If EsCadenaNoVacia(msisdn) And Not CumpleFormato(msisdn, "^\d{9}$") Then
 ElseIf Not EsCadenaNoVacia(identCliente) Or Not EsCadenaNoVacia(nombreCliente) Or Not EsCadenaNoVacia(apellido1Cliente) Then
     errorMsg = "NIF/CIF, nombre y primer apellido del cliente son obligatorios."
 ElseIf esInclusion And Not EsCadenaNoVacia(numDenuncia) Then
-    errorMsg = "El numero de denuncia es obligatorio para una Inclusion."
+    errorMsg = "El numero de denuncia es obligatorio para un Bloqueo Terminal."
 ElseIf esInclusion And Not IsDate(fechaRobo) Then
-    errorMsg = "La fecha del robo es obligatoria y valida para una Inclusion."
+    errorMsg = "La fecha del robo es obligatoria y valida para un Bloqueo Terminal."
 ElseIf esInclusion And Not IsDate(fechaDenuncia) Then
-    errorMsg = "La fecha de la denuncia es obligatoria y valida para una Inclusion."
+    errorMsg = "La fecha de la denuncia es obligatoria y valida para un Bloqueo Terminal."
 ElseIf EsCadenaNoVacia(fechaRobo) And Not IsDate(fechaRobo) Then
     errorMsg = "La fecha del robo no es valida."
 ElseIf EsCadenaNoVacia(fechaDenuncia) And Not IsDate(fechaDenuncia) Then
     errorMsg = "La fecha de la denuncia no es valida."
+ElseIf Len(enlaceExterno) > 500 Then
+    errorMsg = "El enlace externo no puede superar los 500 caracteres."
 End If
 
 If errorMsg <> "" Then
@@ -63,15 +66,16 @@ If ImeiEnCurso(conn, imei) Then
     Response.End
 End If
 
-Dim fechaRoboValor, fechaDenunciaValor, msisdnValor, numDenunciaValor
+Dim fechaRoboValor, fechaDenunciaValor, msisdnValor, numDenunciaValor, enlaceExternoValor
 If IsDate(fechaRobo) Then fechaRoboValor = CDate(fechaRobo) Else fechaRoboValor = Null
 If IsDate(fechaDenuncia) Then fechaDenunciaValor = CDate(fechaDenuncia) Else fechaDenunciaValor = Null
 If EsCadenaNoVacia(msisdn) Then msisdnValor = msisdn Else msisdnValor = Null
 If EsCadenaNoVacia(numDenuncia) Then numDenunciaValor = numDenuncia Else numDenunciaValor = Null
+If EsCadenaNoVacia(enlaceExterno) Then enlaceExternoValor = enlaceExterno Else enlaceExternoValor = Null
 
 Dim resultado
 Set resultado = CrearSolicitudCompleta(conn, tipoClave, imei, msisdnValor, numDenunciaValor, fechaRoboValor, fechaDenunciaValor, _
-    identCliente, nombreCliente, apellido1Cliente, apellido2Cliente, Session("CodIndiceUsuario"), Session("CodOperador"))
+    identCliente, nombreCliente, apellido1Cliente, apellido2Cliente, Session("CodIndiceUsuario"), Session("CodOperador"), enlaceExternoValor)
 
 
 If Not resultado("Exito") Then

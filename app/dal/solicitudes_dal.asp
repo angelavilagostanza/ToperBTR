@@ -92,7 +92,7 @@ End Function
 ' la exclusion del bloqueo en LISTA_NEGRA - todo en UNA sola transaccion (igual que el
 ' legacy, que si envolvia bien esta operacion en insertarSolicitudWeb).
 ' tipoClave: "I" (Inclusion) o "E" (Exclusion).
-Function CrearSolicitudCompleta(conn, tipoClave, imei, msisdn, numDenuncia, fechaRobo, fechaDenuncia, identCliente, nombreCliente, apellido1Cliente, apellido2Cliente, codIndiceUsuario, codOperador)
+Function CrearSolicitudCompleta(conn, tipoClave, imei, msisdn, numDenuncia, fechaRobo, fechaDenuncia, identCliente, nombreCliente, apellido1Cliente, apellido2Cliente, codIndiceUsuario, codOperador, enlaceExterno)
     Dim resultado
     Set resultado = Server.CreateObject("Scripting.Dictionary")
     resultado("Exito") = False
@@ -116,9 +116,9 @@ Function CrearSolicitudCompleta(conn, tipoClave, imei, msisdn, numDenuncia, fech
 
     If Not huboError Then
         Call EjecutarNonQueryTx(conn, _
-            "INSERT INTO SOLICITUD (COD_SOLICITUD, COD_TIPO_SOLICITUD, COD_INDICE_USUARIO, MSISDN, IMEI, NUM_DENUNCIA, FECHA_DENUNCIA, FECHA_ROBO, FECHA_SOLICITUD, FECHA_CREACION, COD_CLIENTE, COD_FICHERO, OPERADOR) " & _
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ?, ?, ?)", _
-            Array(placeholderCod, codTipoSolicitud, codIndiceUsuario, msisdn, imei, numDenuncia, fechaDenuncia, fechaRobo, codCliente, codFicheroGenerico, codOperador))
+            "INSERT INTO SOLICITUD (COD_SOLICITUD, COD_TIPO_SOLICITUD, COD_INDICE_USUARIO, MSISDN, IMEI, NUM_DENUNCIA, FECHA_DENUNCIA, FECHA_ROBO, FECHA_SOLICITUD, FECHA_CREACION, COD_CLIENTE, COD_FICHERO, OPERADOR, ENLACE_EXTERNO) " & _
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ?, ?, ?, ?)", _
+            Array(placeholderCod, codTipoSolicitud, codIndiceUsuario, msisdn, imei, numDenuncia, fechaDenuncia, fechaRobo, codCliente, codFicheroGenerico, codOperador, enlaceExterno))
         If Err.Number <> 0 Then huboError = True
     End If
 
@@ -295,7 +295,7 @@ Function ObtenerSolicitudPorIndice(conn, codIndiceSol)
         "SELECT S.COD_INDICE_SOL, S.COD_SOLICITUD, S.COD_TIPO_SOLICITUD, T.DESCRIPCION AS TIPO, " & _
         "S.MSISDN, S.IMEI, S.NUM_DENUNCIA, S.FECHA_DENUNCIA, S.FECHA_ROBO, S.FECHA_SOLICITUD, S.FECHA_CREACION, " & _
         "CL.NOMBRE AS NOMBRE_CLIENTE, CL.PRIMER_APELLIDO, CL.SEGUNDO_APELLIDO, CL.NUM_IDENTIFICACION, " & _
-        "U.COD_USUARIO AS USUARIO_CREADOR " & _
+        "U.COD_USUARIO AS USUARIO_CREADOR, S.ENLACE_EXTERNO " & _
         "FROM SOLICITUD S " & _
         "INNER JOIN TIPO_SOLICITUD_REF T ON S.COD_TIPO_SOLICITUD = T.COD_TIPO_SOLICITUD " & _
         "LEFT JOIN CLIENTE CL ON S.COD_CLIENTE = CL.COD_CLIENTE " & _
@@ -321,6 +321,7 @@ Function ObtenerSolicitudPorIndice(conn, codIndiceSol)
         s("SegundoApellido") = rs("SEGUNDO_APELLIDO") & ""
         s("NumIdentificacion") = rs("NUM_IDENTIFICACION") & ""
         s("UsuarioCreador") = rs("USUARIO_CREADOR") & ""
+        s("EnlaceExterno") = rs("ENLACE_EXTERNO") & ""
         Set ObtenerSolicitudPorIndice = s
     End If
     rs.Close

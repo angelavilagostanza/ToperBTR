@@ -60,6 +60,15 @@ token = GenerarTokenCsrf()
         <tr><th>Fecha de denuncia</th><td><%= sol("FechaDenuncia") & "" %></td></tr>
         <tr><th>Fecha de creacion</th><td><%= sol("FechaCreacion") %></td></tr>
         <tr><th>Creada por</th><td><%= Server.HTMLEncode(sol("UsuarioCreador")) %></td></tr>
+        <tr><th>Enlace externo</th><td>
+            <% If Not EsCadenaNoVacia(sol("EnlaceExterno")) Then %>
+            &mdash;
+            <% ElseIf Left(LCase(sol("EnlaceExterno")), 7) = "http://" Or Left(LCase(sol("EnlaceExterno")), 8) = "https://" Then %>
+            <a href="<%= Server.HTMLEncode(sol("EnlaceExterno")) %>" target="_blank" rel="noopener noreferrer"><%= Server.HTMLEncode(sol("EnlaceExterno")) %></a>
+            <% Else %>
+            <%= Server.HTMLEncode(sol("EnlaceExterno")) %>
+            <% End If %>
+        </td></tr>
     </table>
 
     <h3>Cliente</h3>

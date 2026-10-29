@@ -29,7 +29,7 @@ errorMsg = Request.QueryString("error")
 Dim esInclusion, soloLecturaCliente, tituloTipo, atributoReadonly
 esInclusion = (Session("Sol_TipoClave") = "I")
 soloLecturaCliente = (Session("Sol_PrefillBloqueado") = True)
-tituloTipo = SiVerdadero(esInclusion, "Inclusion", "Exclusion")
+tituloTipo = SiVerdadero(esInclusion, "Bloqueo Terminal", "Desbloqueo Terminal")
 atributoReadonly = SiVerdadero(soloLecturaCliente, " readonly", "")
 %>
 <!DOCTYPE html>
@@ -94,6 +94,9 @@ atributoReadonly = SiVerdadero(soloLecturaCliente, " readonly", "")
         </label>
         <label>Segundo apellido
             <input type="text" name="apellido2Cliente" maxlength="200" value="<%= Server.HTMLEncode(Session("Sol_PrefillApellido2")) %>"<%= atributoReadonly %>>
+        </label>
+        <label>Enlace externo (opcional)
+            <input type="text" name="enlaceExterno" maxlength="500" placeholder="Enlace a Jira, ID en CRM, etc..">
         </label>
         <button type="submit">Crear solicitud</button>
     </form>

@@ -60,7 +60,7 @@ If tipoClave = "E" Then
     If padre Is Nothing Then
         conn.Close
         Set conn = Nothing
-        Response.Redirect "/modules/solicitudes/pre_alta.asp?error=" & Server.URLEncode("No existe una solicitud de Inclusion previa para este IMEI; no se puede crear una Exclusion.")
+        Response.Redirect "/modules/solicitudes/pre_alta.asp?error=" & Server.URLEncode("No existe una solicitud de Bloqueo Terminal previa para este IMEI; no se puede crear un Desbloqueo Terminal.")
         Response.End
     End If
     Session("Sol_PrefillNombre") = padre("NombreCliente")

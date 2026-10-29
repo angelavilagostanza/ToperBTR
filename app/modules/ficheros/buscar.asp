@@ -204,9 +204,8 @@ End Function
     <tr><td colspan="5" style="text-align:center;color:#777;padding:1.5rem 0">Sin resultados para los filtros indicados.</td></tr>
     <% Else %>
     <% Do While Not rsFicheros.EOF
-        Dim nombreFila, nombreFilaJs
+        Dim nombreFila
         nombreFila   = rsFicheros("NOMBRE") & ""
-        nombreFilaJs = Replace(Replace(nombreFila, "\", ""), "'", "")
     %>
     <tr>
         <td><a href="/modules/ficheros/descargar.asp?nombre=<%= Server.URLEncode(nombreFila) %>"><%= Server.HTMLEncode(nombreFila) %></a></td>
@@ -217,7 +216,16 @@ End Function
             <% If CLng(rsFicheros("NUM_INCIDENCIAS")) = 0 Then %>
             Sin incidencias
             <% ElseIf puedeVerIncidencias Then %>
-            <a href="#" onclick="document.getElementById('nombreFicheroInc').value='<%= nombreFilaJs %>'; document.formVerIncidencias.submit(); return false;">Incidencias: <%= rsFicheros("NUM_INCIDENCIAS") %></a>
+            <!-- Hallazgo B4: antes el nombre de fichero se incrustaba directamente en el
+                 onclick quitando solo "\" y "'" a mano (Replace ad-hoc), sin cubrir """ ni
+                 "<"/">" - el nombre viene de FICHEROS.NOMBRE, poblada por el proceso batch
+                 externo EIRControl (fuera del alcance de ToperBTR), asi que hoy no es
+                 controlable por ningun usuario de la web, pero seguia siendo un vector de
+                 XSS si ese dato llegase a contener algo asi algun dia. Ahora el valor va en
+                 un atributo data-* con el mismo Server.HTMLEncode que ya protege el resto de
+                 la celda (nunca se interpola dentro del propio onclick), leido con
+                 this.dataset.nombre al hacer clic. -->
+            <a href="#" data-nombre-fichero="<%= Server.HTMLEncode(nombreFila) %>" onclick="document.getElementById('nombreFicheroInc').value=this.dataset.nombreFichero; document.formVerIncidencias.submit(); return false;">Incidencias: <%= rsFicheros("NUM_INCIDENCIAS") %></a>
             <% Else %>
             Incidencias: <%= rsFicheros("NUM_INCIDENCIAS") %>
             <% End If %>

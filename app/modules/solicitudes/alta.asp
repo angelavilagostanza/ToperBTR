@@ -1,5 +1,8 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 ' Hallazgo B2: hasta ahora el unico permiso comprobado aqui era RequiereSesion() (estar
 ' logueado). En la practica esta pagina solo pinta algo util si Session("Sol_Imei") tiene
 ' valor, y esa variable SOLO la fija pre_alta_do.asp, que si tiene el guard correcto
@@ -63,7 +66,7 @@ atributoReadonly = SiVerdadero(soloLecturaCliente, " readonly", "")
             <input type="text" name="msisdn" maxlength="9">
         </label>
         <% If esInclusion Then %>
-        <label>Numero de denuncia
+        <label>Número de denuncia
             <input type="text" name="numDenuncia" maxlength="20" required>
         </label>
         <label>Fecha del robo
@@ -73,7 +76,7 @@ atributoReadonly = SiVerdadero(soloLecturaCliente, " readonly", "")
             <input type="date" maxlength="50" name="fechaDenuncia" required>
         </label>
         <% Else %>
-        <label>Numero de denuncia (opcional)
+        <label>Número de denuncia (opcional)
             <input type="text" name="numDenuncia" maxlength="20">
         </label>
         <label>Fecha del robo (opcional)

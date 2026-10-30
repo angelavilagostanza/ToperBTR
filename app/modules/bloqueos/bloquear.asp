@@ -1,5 +1,8 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 
@@ -39,14 +42,14 @@ tokenCsrf = GenerarTokenCsrf()
         <div class="campo">
             <label for="imei">IMEI <span class="obligatorio">*</span></label>
             <input type="text" id="imei" name="imei" maxlength="15" required
-                placeholder="15 digitos numericos" autocomplete="off">
+                placeholder="15 dígitos numéricos" autocomplete="off">
             <span class="ayuda-campo">Debe ser un IMEI de un cliente activo de Grupo MASMOVIL.</span>
         </div>
 
         <div class="campo">
-            <label for="razon">Razon de bloqueo <span class="obligatorio">*</span></label>
+            <label for="razon">Razón de bloqueo <span class="obligatorio">*</span></label>
             <select id="razon" name="razon" required>
-                <option value="">-- Seleccione una razon --</option>
+                <option value="">-- Seleccione una razón --</option>
                 <% Do While Not rsRazones.EOF %>
                 <option value="<%= CLng(rsRazones("COD_RAZON")) %>"><%= Server.HTMLEncode(rsRazones("DESCRIPCION") & "") %></option>
                 <% rsRazones.MoveNext : Loop %>
@@ -56,7 +59,7 @@ tokenCsrf = GenerarTokenCsrf()
         <div class="campo">
             <label for="comentario">Comentario</label>
             <textarea id="comentario" name="comentario" maxlength="500" rows="3"
-                placeholder="Informacion adicional (opcional)"></textarea>
+                placeholder="Información adicional (opcional)"></textarea>
         </div>
 
         <div class="acciones-form">

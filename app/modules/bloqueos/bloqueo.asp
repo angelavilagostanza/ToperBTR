@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/bloqueos_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 
@@ -39,9 +42,9 @@ Dim errImei
 errImei = ""
 If buscado And fImei <> "" Then
     If Len(fImei) <> 15 Then
-        errImei = "El IMEI debe tener exactamente 15 digitos."
+        errImei = "El IMEI debe tener exactamente 15 dígitos."
     ElseIf Not CumpleFormato(fImei, "^\d{15}$") Then
-        errImei = "El IMEI debe contener solo digitos numericos."
+        errImei = "El IMEI debe contener solo dígitos numéricos."
     End If
 End If
 
@@ -123,7 +126,7 @@ End Function
         <input type="hidden" name="buscado" value="1">
         <div class="formulario-fila">
             <label>IMEI
-                <input type="text" name="imei" value="<%= Server.HTMLEncode(fImei) %>" maxlength="15" placeholder="15 digitos">
+                <input type="text" name="imei" value="<%= Server.HTMLEncode(fImei) %>" maxlength="15" placeholder="15 dígitos">
                 <% If errImei <> "" Then %><span class="error-campo"><%= Server.HTMLEncode(errImei) %></span><% End If %>
             </label>
             <label>Tipo de bloqueo
@@ -139,7 +142,7 @@ End Function
                     %>
                 </select>
             </label>
-            <label>Razon
+            <label>Razón
                 <select name="razon">
                     <option value="">-- Todas --</option>
                     <%
@@ -161,15 +164,15 @@ End Function
             </label>
         </div>
         <div class="formulario-fila">
-            <label>Fecha inclusion desde
+            <label>Fecha inclusión desde
                 <input type="date" name="fechaDesde" value="<%= Server.HTMLEncode(fDesde) %>">
             </label>
-            <label>Fecha inclusion hasta
+            <label>Fecha inclusión hasta
                 <input type="date" name="fechaHasta" value="<%= Server.HTMLEncode(fHasta) %>">
             </label>
         </div>
         <div id="aviso-filtro" class="flash-info" hidden style="margin-top:.5rem">
-            Indica al menos un criterio de b&uacute;squeda. Puedes usar <strong>Fecha inclusion desde</strong> para listar bloqueos por fecha.
+            Indica al menos un criterio de b&uacute;squeda. Puedes usar <strong>Fecha inclusión desde</strong> para listar bloqueos por fecha.
         </div>
         <div class="formulario-fila">
             <button type="submit" class="btn btn-primario">Buscar</button>
@@ -222,8 +225,8 @@ End Function
                     <th><input type="checkbox" id="selTodos" title="Seleccionar todos"></th>
                     <th>IMEI</th>
                     <th>Tipo de bloqueo</th>
-                    <th>Razon</th>
-                    <th>Fecha inclusion</th>
+                    <th>Razón</th>
+                    <th>Fecha inclusión</th>
                     <th>Comentario</th>
                 </tr>
             </thead>
@@ -255,7 +258,7 @@ End Function
         </table>
         <div class="acciones-form">
             <button type="submit" class="btn btn-peligro"
-                onclick="return confirm('&iquest;Desbloquear los IMEI seleccionados? Esta accion es irreversible.')">
+                onclick="return confirm('&iquest;Desbloquear los IMEI seleccionados? Esta acción es irreversible.')">
                 Desbloquear seleccionados
             </button>
         </div>

@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/solicitudes_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequiereAccion(conn, CodigoAccion(conn, "ESCRITURA_SOLICITUDES"))
@@ -42,7 +45,7 @@ For i = 0 To UBound(listaIdsRaw)
     idLng = CLng(rawId)
     If Not EsSolicitudCancelable(conn, idLng) Then
         conn.Close
-        Call EstablecerMensajeFlash("error", "Una o mas solicitudes seleccionadas no pueden cancelarse.")
+        Call EstablecerMensajeFlash("error", "Una o más solicitudes seleccionadas no pueden cancelarse.")
         Response.Redirect "/modules/solicitudes/consulta.asp"
         Response.End
     End If
@@ -51,7 +54,7 @@ For i = 0 To UBound(listaIdsRaw)
 Next
 If nVal = 0 Then
     conn.Close
-    Call EstablecerMensajeFlash("error", "No se ha seleccionado ninguna solicitud valida.")
+    Call EstablecerMensajeFlash("error", "No se ha seleccionado ninguna solicitud válida.")
     Response.Redirect "/modules/solicitudes/consulta.asp"
     Response.End
 End If
@@ -72,7 +75,7 @@ Next
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>ToperBTR - Confirmar cancelacion</title>
+<title>ToperBTR - Confirmar cancelación</title>
 <link rel="stylesheet" href="/assets/css/site.css">
 <link rel="icon" href="/images/ToperBTR_favicon.ico" type="image/x-icon">
 </head>
@@ -82,7 +85,7 @@ Next
 <div class="app-body">
 <!--#include virtual="/include/layout/menu.asp"-->
 <main class="contenido">
-    <h2>Confirmar cancelacion de solicitud(es)</h2>
+    <h2>Confirmar cancelación de solicitud(es)</h2>
     <ul>
     <% For j = 0 To UBound(listaIdsVal)
         Dim s
@@ -95,7 +98,7 @@ Next
     <form method="post" action="/modules/solicitudes/cancelar_ejecutar.asp">
         <input type="hidden" name="csrf" value="<%= Server.HTMLEncode(tokenConfirm) %>">
         <input type="hidden" name="seleccion" value="<%= Server.HTMLEncode(seleccionValidada) %>">
-        <button type="submit">Confirmar cancelacion</button>
+        <button type="submit">Confirmar cancelación</button>
         <a href="/modules/solicitudes/consulta.asp">Cancelar</a>
     </form>
 </main>

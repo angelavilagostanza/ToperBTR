@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/solicitudes_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Call RequiereSesion()
 
 If Not EsCadenaNoVacia(Session("Sol_Imei")) Then
@@ -33,19 +36,19 @@ Dim errorMsg
 errorMsg = ""
 
 If EsCadenaNoVacia(msisdn) And Not CumpleFormato(msisdn, "^\d{9}$") Then
-    errorMsg = "El MSISDN, si se indica, debe tener 9 digitos numericos."
+    errorMsg = "El MSISDN, si se indica, debe tener 9 dígitos numéricos."
 ElseIf Not EsCadenaNoVacia(identCliente) Or Not EsCadenaNoVacia(nombreCliente) Or Not EsCadenaNoVacia(apellido1Cliente) Then
     errorMsg = "NIF/CIF, nombre y primer apellido del cliente son obligatorios."
 ElseIf esInclusion And Not EsCadenaNoVacia(numDenuncia) Then
-    errorMsg = "El numero de denuncia es obligatorio para un Bloqueo Terminal."
+    errorMsg = "El número de denuncia es obligatorio para un Bloqueo Terminal."
 ElseIf esInclusion And Not IsDate(fechaRobo) Then
-    errorMsg = "La fecha del robo es obligatoria y valida para un Bloqueo Terminal."
+    errorMsg = "La fecha del robo es obligatoria y válida para un Bloqueo Terminal."
 ElseIf esInclusion And Not IsDate(fechaDenuncia) Then
-    errorMsg = "La fecha de la denuncia es obligatoria y valida para un Bloqueo Terminal."
+    errorMsg = "La fecha de la denuncia es obligatoria y válida para un Bloqueo Terminal."
 ElseIf EsCadenaNoVacia(fechaRobo) And Not IsDate(fechaRobo) Then
-    errorMsg = "La fecha del robo no es valida."
+    errorMsg = "La fecha del robo no es válida."
 ElseIf EsCadenaNoVacia(fechaDenuncia) And Not IsDate(fechaDenuncia) Then
-    errorMsg = "La fecha de la denuncia no es valida."
+    errorMsg = "La fecha de la denuncia no es válida."
 ElseIf Len(enlaceExterno) > 500 Then
     errorMsg = "El enlace externo no puede superar los 500 caracteres."
 End If

@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/incidencias_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequiereAccion(conn, CodigoAccion(conn, "ESCRITURA_INCIDENCIAS"))
@@ -24,7 +27,7 @@ comentario = Trim(Request.Form("comentario"))
 If Not EsCadenaNoVacia(comentario) Then
     conn.Close
     Set conn = Nothing
-    Response.Redirect "/modules/incidencias/detalle.asp?cod=" & codIndIncidencia & "&error=" & Server.URLEncode("El comentario no puede estar vacio.")
+    Response.Redirect "/modules/incidencias/detalle.asp?cod=" & codIndIncidencia & "&error=" & Server.URLEncode("El comentario no puede estar vacío.")
     Response.End
 End If
 
@@ -38,7 +41,7 @@ Call RegistrarAuditoria(conn, Session("CodIndiceUsuario"), "INCIDENCIA_COMENTARI
 conn.Close
 Set conn = Nothing
 
-Call EstablecerMensajeFlash("exito", "Comentario anadido correctamente.")
+Call EstablecerMensajeFlash("exito", "Comentario añadido correctamente.")
 Response.Redirect "/modules/incidencias/detalle.asp?cod=" & codIndIncidencia
 Response.End
 %>

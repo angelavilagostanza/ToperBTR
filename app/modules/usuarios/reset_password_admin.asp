@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/usuarios_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequierePerfil(Array(CodigoPerfil(conn, "Seguridad")))
@@ -30,7 +33,7 @@ errorMsg = Request.QueryString("error")
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>ToperBTR - Cambiar contrasena de usuario</title>
+<title>ToperBTR - Cambiar contraseña de usuario</title>
 <link rel="stylesheet" href="/assets/css/site.css">
 <link rel="icon" href="/images/ToperBTR_favicon.ico" type="image/x-icon">
 </head>
@@ -40,20 +43,20 @@ errorMsg = Request.QueryString("error")
 <div class="app-body">
 <!--#include virtual="/include/layout/menu.asp"-->
 <main class="contenido">
-    <h2>Cambiar contrasena de <%= Server.HTMLEncode(u("CodUsuario")) %></h2>
+    <h2>Cambiar contraseña de <%= Server.HTMLEncode(u("CodUsuario")) %></h2>
     <% If EsCadenaNoVacia(errorMsg) Then %>
     <p class="flash-error"><%= Server.HTMLEncode(errorMsg) %></p>
     <% End If %>
     <form method="post" action="/modules/usuarios/reset_password_admin_do.asp" class="formulario-vertical">
         <input type="hidden" name="csrf" value="<%= Server.HTMLEncode(token) %>">
         <input type="hidden" name="cod" value="<%= u("CodIndiceUsuario") %>">
-        <label>Nueva contrasena
+        <label>Nueva contraseña
             <input type="password" name="passwordNueva" minlength="10" required>
         </label>
-        <label>Repita la nueva contrasena
+        <label>Repita la nueva contraseña
             <input type="password" name="passwordNueva2" minlength="10" required>
         </label>
-        <button type="submit">Cambiar contrasena</button>
+        <button type="submit">Cambiar contraseña</button>
     </form>
 </main>
 </div>

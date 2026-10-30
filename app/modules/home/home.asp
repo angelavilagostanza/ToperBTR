@@ -1,5 +1,8 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Call RequiereSesion()
 %>
 <!DOCTYPE html>
@@ -30,7 +33,7 @@ Call RequiereSesion()
             </svg>
             <span class="indice-card-cuerpo">
                 <span class="indice-card-titulo">Solicitudes</span>
-                <span class="indice-card-desc">Consulta y gestión de solicitudes de Inclusión y Exclusión de terminales en la base. Cancelación de solicitudes que no esten terminadas (Rechazada, Cancelada y Actualizada).</span>
+                <span class="indice-card-desc">Consulta y gestión de solicitudes de bloqueo y desbloqueo de terminales en la base. Cancelación de solicitudes que no estén terminadas (Rechazada, Cancelada y Actualizada).</span>
             </span>
         </a>
         <% End If %>

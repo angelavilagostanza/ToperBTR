@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/usuarios_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequierePerfil(Array(CodigoPerfil(conn, "Seguridad")))
@@ -25,11 +28,11 @@ urlVolver = "/modules/usuarios/reset_password_admin.asp?cod=" & codIndiceUsuario
 
 If Len(passwordNueva) < 10 Then
     conn.Close
-    Response.Redirect urlVolver & Server.URLEncode("La nueva contrasena debe tener al menos 10 caracteres.")
+    Response.Redirect urlVolver & Server.URLEncode("La nueva contraseña debe tener al menos 10 caracteres.")
     Response.End
 ElseIf passwordNueva <> passwordNueva2 Then
     conn.Close
-    Response.Redirect urlVolver & Server.URLEncode("Las dos contrasenas nuevas no coinciden.")
+    Response.Redirect urlVolver & Server.URLEncode("Las dos contraseñas nuevas no coinciden.")
     Response.End
 End If
 
@@ -60,7 +63,7 @@ Call RegistrarAuditoria(conn, Session("CodIndiceUsuario"), "CAMBIO_PASSWORD_ADMI
 conn.Close
 Set conn = Nothing
 
-Call EstablecerMensajeFlash("exito", "Contrasena del usuario actualizada correctamente.")
+Call EstablecerMensajeFlash("exito", "Contraseña del usuario actualizada correctamente.")
 Response.Redirect "/modules/usuarios/listar.asp"
 Response.End
 %>

@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/incidencias_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequiereAccion(conn, CodigoAccion(conn, "LECTURA_INCIDENCIAS"))
@@ -50,13 +53,13 @@ errorMsg = Request.QueryString("error")
 
     <table class="tabla-datos">
         <tr><th>Tipo</th><td><%= Server.HTMLEncode(inc("TipoIncidencia")) %></td></tr>
-        <tr><th>Categoria</th><td><%= Server.HTMLEncode(inc("Categoria")) %></td></tr>
+        <tr><th>Categoría</th><td><%= Server.HTMLEncode(inc("Categoria")) %></td></tr>
         <tr><th>Operador</th><td><%= Server.HTMLEncode(inc("Operador")) %></td></tr>
         <tr><th>Estado</th><td><%= Server.HTMLEncode(estadoVigente) %></td></tr>
         <tr><th>Causa</th><td><%= Server.HTMLEncode(inc("Causa")) %></td></tr>
         <tr><th>Otros datos</th><td><%= Server.HTMLEncode(inc("OtrosDatos")) %></td></tr>
-        <tr><th>Fecha creacion</th><td><%= inc("FechaCreacion") %></td></tr>
-        <tr><th>Fecha actualizacion</th><td><%= inc("FechaActualizacion") & "" %></td></tr>
+        <tr><th>Fecha creación</th><td><%= inc("FechaCreacion") %></td></tr>
+        <tr><th>Fecha actualización</th><td><%= inc("FechaActualizacion") & "" %></td></tr>
         <tr><th>Vinculada a</th><td>
             <% If inc("TipoObjeto") = "S" And EsCadenaNoVacia(inc("CodSolicitud")) Then %>
             Solicitud <a href="/modules/solicitudes/detalle.asp?cod=<%= inc("CodObjeto") %>"><%= Server.HTMLEncode(inc("CodSolicitud")) %></a>
@@ -98,11 +101,11 @@ errorMsg = Request.QueryString("error")
         <label>Nuevo comentario
             <textarea name="comentario" maxlength="500" rows="4" required></textarea>
         </label>
-        <button type="submit">Anadir comentario</button>
+        <button type="submit">Añadir comentario</button>
     </form>
     <% End If %>
 
-    <p><a href="/modules/incidencias/buscar.asp">Volver a la busqueda</a></p>
+    <p><a href="/modules/incidencias/buscar.asp">Volver a la búsqueda</a></p>
 </main>
 </div>
 <!--#include virtual="/include/layout/footer.asp"-->

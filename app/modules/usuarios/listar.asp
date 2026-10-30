@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/usuarios_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequierePerfil(Array(CodigoPerfil(conn, "Seguridad")))
@@ -162,7 +165,7 @@ End Function
 		</div>
         <table class="tabla-datos">
         <thead>
-        <tr><th></th><th>Login</th><th>Nombre</th><th>Apellidos</th><th>Perfil</th><th>Estado</th><th>Fecha Alta</th><th>Ultima conexion</th><th></th><th></th></tr>
+        <tr><th></th><th>Login</th><th>Nombre</th><th>Apellidos</th><th>Perfil</th><th>Estado</th><th>Fecha Alta</th><th>Última conexión</th><th></th><th></th></tr>
         </thead>
         <tbody>
         <% Do While Not rsUsuarios.EOF %>
@@ -180,7 +183,7 @@ End Function
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <circle cx="8" cy="15" r="4"/><path d="M12 11l7-7m-3 0l3 3"/>
                     </svg>
-                    <span class="cabecera-icono-label">Cambiar contrasena</span>
+                    <span class="cabecera-icono-label">Cambiar contraseña</span>
                 </a>
             </td>
             <td>

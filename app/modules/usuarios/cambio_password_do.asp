@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/usuarios_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Call RequiereSesion()
 
 If Not TokenCsrfValido(Request.Form("csrf")) Then
@@ -14,10 +17,10 @@ passwordNueva = Request.Form("passwordNueva")
 passwordNueva2 = Request.Form("passwordNueva2")
 
 If Len(passwordNueva) < 10 Then
-    Response.Redirect "/modules/usuarios/cambio_password.asp?error=" & Server.URLEncode("La nueva contrasena debe tener al menos 10 caracteres.")
+    Response.Redirect "/modules/usuarios/cambio_password.asp?error=" & Server.URLEncode("La nueva contraseña debe tener al menos 10 caracteres.")
     Response.End
 ElseIf passwordNueva <> passwordNueva2 Then
-    Response.Redirect "/modules/usuarios/cambio_password.asp?error=" & Server.URLEncode("Las dos contrasenas nuevas no coinciden.")
+    Response.Redirect "/modules/usuarios/cambio_password.asp?error=" & Server.URLEncode("Las dos contraseñas nuevas no coinciden.")
     Response.End
 End If
 
@@ -36,7 +39,7 @@ End If
 If Not VerificarPassword(passwordActual, u("Password"), u("AlgoritmoPassword")) Then
     conn.Close
     Set conn = Nothing
-    Response.Redirect "/modules/usuarios/cambio_password.asp?error=" & Server.URLEncode("La contrasena actual no es correcta.")
+    Response.Redirect "/modules/usuarios/cambio_password.asp?error=" & Server.URLEncode("La contraseña actual no es correcta.")
     Response.End
 End If
 
@@ -59,7 +62,7 @@ Call RegistrarAuditoria(conn, Session("CodIndiceUsuario"), "CAMBIO_PASSWORD", "U
 conn.Close
 Set conn = Nothing
 
-Call EstablecerMensajeFlash("exito", "Contrasena actualizada correctamente.")
+Call EstablecerMensajeFlash("exito", "Contraseña actualizada correctamente.")
 Response.Redirect "/modules/home/home.asp"
 Response.End
 %>

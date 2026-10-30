@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/solicitudes_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequiereAccion(conn, CodigoAccion(conn, "LECTURA_SOLICITUDES"))
@@ -55,10 +58,10 @@ token = GenerarTokenCsrf()
         <tr><th>Tipo</th><td><%= Server.HTMLEncode(sol("Tipo")) %></td></tr>
         <tr><th>IMEI</th><td><%= Server.HTMLEncode(sol("Imei")) %></td></tr>
         <tr><th>MSISDN</th><td><%= Server.HTMLEncode(sol("Msisdn")) %></td></tr>
-        <tr><th>Numero de denuncia</th><td><%= Server.HTMLEncode(sol("NumDenuncia")) %></td></tr>
+        <tr><th>Número de denuncia</th><td><%= Server.HTMLEncode(sol("NumDenuncia")) %></td></tr>
         <tr><th>Fecha de robo</th><td><%= sol("FechaRobo") & "" %></td></tr>
         <tr><th>Fecha de denuncia</th><td><%= sol("FechaDenuncia") & "" %></td></tr>
-        <tr><th>Fecha de creacion</th><td><%= sol("FechaCreacion") %></td></tr>
+        <tr><th>Fecha de creación</th><td><%= sol("FechaCreacion") %></td></tr>
         <tr><th>Creada por</th><td><%= Server.HTMLEncode(sol("UsuarioCreador")) %></td></tr>
         <tr><th>Enlace externo</th><td>
             <% If Not EsCadenaNoVacia(sol("EnlaceExterno")) Then %>
@@ -77,7 +80,7 @@ token = GenerarTokenCsrf()
         <tr><th>Nombre</th><td><%= Server.HTMLEncode(sol("NombreCliente")) %> <%= Server.HTMLEncode(sol("PrimerApellido")) %> <%= Server.HTMLEncode(sol("SegundoApellido")) %></td></tr>
     </table>
 
-    <h3>Historico de estados</h3>
+    <h3>Histórico de estados</h3>
     <table class="tabla-datos">
     <thead><tr><th>Estado</th><th>Desde</th><th>Hasta</th></tr></thead>
     <tbody>
@@ -134,7 +137,7 @@ token = GenerarTokenCsrf()
     </form>
     <% End If %>
 
-    <p><a href="/modules/solicitudes/consulta.asp">Volver a la busqueda</a></p>
+    <p><a href="/modules/solicitudes/consulta.asp">Volver a la búsqueda</a></p>
 </main>
 </div>
 <!--#include virtual="/include/layout/footer.asp"-->

@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/usuarios_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequierePerfil(Array(CodigoPerfil(conn, "Seguridad")))
@@ -34,15 +37,15 @@ errorMsg = ""
 ' pueda contener "<", ">", comillas ni espacios, cerrando el vector de raiz ademas de
 ' quitar el Response.Write que lo exponia.
 If Not (EsCadenaNoVacia(usuario) And LongitudEntre(usuario, 1, 50) And CumpleFormato(usuario, "^[A-Za-z0-9._%+@-]+$")) Then
-    errorMsg = "El login es obligatorio (maximo 50 caracteres; solo letras, numeros, y . _ % + @ -)."
+    errorMsg = "El login es obligatorio (máximo 50 caracteres; solo letras, números, y . _ % + @ -)."
 ElseIf Not EsCadenaNoVacia(nombre) Or Not EsCadenaNoVacia(apellidos) Then
     errorMsg = "Nombre y apellidos son obligatorios."
 ElseIf Not IsNumeric(codPerfil) Then
     errorMsg = "Debe seleccionar un perfil."
 ElseIf Len(password) < 10 Then
-    errorMsg = "La contrasena debe tener al menos 10 caracteres."
+    errorMsg = "La contraseña debe tener al menos 10 caracteres."
 ElseIf password <> password2 Then
-    errorMsg = "Las dos contrasenas no coinciden."
+    errorMsg = "Las dos contraseñas no coinciden."
 ElseIf ExisteLogin(conn, usuario) Then
     ' Decision de negocio: un login dado de baja NO se puede reutilizar (por trazabilidad),
     ' a diferencia del legacy, que si lo permitia. Por eso aqui NO se excluye ESTADO=Borrado.
@@ -65,7 +68,7 @@ maximoUsuarios = NumMaxUsuariosOperador(conn, codOperador)
 If actualesUsuarios >= maximoUsuarios Then
     conn.Close
     Set conn = Nothing
-    Response.Redirect "/modules/usuarios/alta.asp?error=" & Server.URLEncode("Se ha alcanzado el numero maximo de usuarios para su operador.")
+    Response.Redirect "/modules/usuarios/alta.asp?error=" & Server.URLEncode("Se ha alcanzado el número máximo de usuarios para su operador.")
     Response.End
 End If
 

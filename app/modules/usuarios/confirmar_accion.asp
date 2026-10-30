@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/usuarios_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequierePerfil(Array(CodigoPerfil(conn, "Seguridad")))
@@ -26,7 +29,7 @@ End If
 
 If Not EsCadenaNoVacia(seleccionCsv) Then
     conn.Close
-    Call EstablecerMensajeFlash("error", "No se ha seleccionado ningun usuario.")
+    Call EstablecerMensajeFlash("error", "No se ha seleccionado ningún usuario.")
     Response.Redirect volver
     Response.End
 End If
@@ -65,7 +68,7 @@ tokenConfirm = GenerarTokenCsrf()
 <!--#include virtual="/include/layout/menu.asp"-->
 <main class="contenido">
     <h2>Confirmar: <%= Server.HTMLEncode(textoAccion) %></h2>
-    <p>Se va a aplicar esta accion a los siguientes usuarios:</p>
+    <p>Se va a aplicar esta acción a los siguientes usuarios:</p>
     <ul>
     <% For i = 0 To UBound(listaIds)
         Dim u

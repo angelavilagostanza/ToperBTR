@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/usuarios_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequierePerfil(Array(CodigoPerfil(conn, "Seguridad")))
@@ -55,7 +58,7 @@ If ok Then
     For i = 0 To UBound(listaIdsLng)
         Call RegistrarAuditoria(conn, Session("CodIndiceUsuario"), "USUARIO_" & UCase(accion), "USUARIOS", listaIdsLng(i), "OK", "")
     Next
-    Call EstablecerMensajeFlash("exito", "Operacion realizada correctamente.")
+    Call EstablecerMensajeFlash("exito", "Operación realizada correctamente.")
 Else
     Call EstablecerMensajeFlash("error", MensajeErrorGenerico())
 End If

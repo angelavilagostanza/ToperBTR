@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/bloqueos_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 
@@ -22,7 +25,7 @@ seleccionRaw = Request.Form("seleccion")
 If Not EsCadenaNoVacia(seleccionRaw) Then
     conn.Close
     Set conn = Nothing
-    Call EstablecerMensajeFlash("aviso", "No se ha seleccionado ningun IMEI para desbloquear.")
+    Call EstablecerMensajeFlash("aviso", "No se ha seleccionado ningún IMEI para desbloquear.")
     Response.Redirect "/modules/bloqueos/bloqueo.asp"
     Response.End
 End If
@@ -47,7 +50,7 @@ Next
 If numValidos = 0 Then
     conn.Close
     Set conn = Nothing
-    Call EstablecerMensajeFlash("aviso", "Ninguno de los IMEIs seleccionados tiene formato valido.")
+    Call EstablecerMensajeFlash("aviso", "Ninguno de los IMEIs seleccionados tiene formato válido.")
     Response.Redirect "/modules/bloqueos/bloqueo.asp"
     Response.End
 End If
@@ -70,9 +73,9 @@ Set conn = Nothing
 If desbloqueados = numValidos Then
     Call EstablecerMensajeFlash("exito", "Se ha desbloqueado correctamente " & desbloqueados & " IMEI(s).")
 ElseIf desbloqueados > 0 Then
-    Call EstablecerMensajeFlash("aviso", "Se han desbloqueado " & desbloqueados & " de " & numValidos & " IMEI(s). Los restantes podrian no tener bloqueo directo activo.")
+    Call EstablecerMensajeFlash("aviso", "Se han desbloqueado " & desbloqueados & " de " & numValidos & " IMEI(s). Los restantes podrían no tener bloqueo directo activo.")
 Else
-    Call EstablecerMensajeFlash("error", "No se ha podido desbloquear ningun IMEI. Es posible que no tengan bloqueo directo activo.")
+    Call EstablecerMensajeFlash("error", "No se ha podido desbloquear ningún IMEI. Es posible que no tengan bloqueo directo activo.")
 End If
 
 Response.Redirect "/modules/bloqueos/bloqueo.asp"

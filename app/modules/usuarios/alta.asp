@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/usuarios_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequierePerfil(Array(CodigoPerfil(conn, "Seguridad")))
@@ -63,10 +66,10 @@ errorMsg = Request.QueryString("error")
             </label>
         </div>
         <div class="formulario-fila">
-            <label>Contrasena
+            <label>Contraseña
                 <input type="password" name="password" minlength="10" maxlength="100" autocomplete="new-password" required>
             </label>
-            <label>Repita la contrasena
+            <label>Repita la contraseña
                 <input type="password" name="password2" minlength="10" maxlength="100" autocomplete="new-password" required>
             </label>
         </div>

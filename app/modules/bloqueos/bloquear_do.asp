@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/bloqueos_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 
@@ -31,14 +34,14 @@ End If
 
 If Len(imei) <> 15 Or Not CumpleFormato(imei, "^\d{15}$") Then
     conn.Close
-    Call EstablecerMensajeFlash("error", "El IMEI debe tener exactamente 15 digitos numericos.")
+    Call EstablecerMensajeFlash("error", "El IMEI debe tener exactamente 15 dígitos numéricos.")
     Response.Redirect "/modules/bloqueos/bloquear.asp"
     Response.End
 End If
 
 If Not EsCadenaNoVacia(codRazon) Or Not IsNumeric(codRazon) Then
     conn.Close
-    Call EstablecerMensajeFlash("error", "Debe seleccionar una razon de bloqueo.")
+    Call EstablecerMensajeFlash("error", "Debe seleccionar una razón de bloqueo.")
     Response.Redirect "/modules/bloqueos/bloquear.asp"
     Response.End
 End If
@@ -70,7 +73,7 @@ Select Case resultado
         Response.End
 
     Case Else
-        Call EstablecerMensajeFlash("error", "No se ha podido realizar el bloqueo. Intentelo de nuevo.")
+        Call EstablecerMensajeFlash("error", "No se ha podido realizar el bloqueo. Inténtelo de nuevo.")
         conn.Close
         Set conn = Nothing
         Response.Redirect "/modules/bloqueos/bloquear.asp"

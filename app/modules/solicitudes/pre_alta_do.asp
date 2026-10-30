@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/solicitudes_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequiereAccion(conn, CodigoAccion(conn, "ESCRITURA_SOLICITUDES"))
@@ -18,7 +21,7 @@ tipoClave = Request.Form("tipo")
 If Not CumpleFormato(imei, "^\d{15}$") Then
     conn.Close
     Set conn = Nothing
-    Response.Redirect "/modules/solicitudes/pre_alta.asp?error=" & Server.URLEncode("El IMEI debe tener 15 digitos numericos.")
+    Response.Redirect "/modules/solicitudes/pre_alta.asp?error=" & Server.URLEncode("El IMEI debe tener 15 dígitos numéricos.")
     Response.End
 End If
 

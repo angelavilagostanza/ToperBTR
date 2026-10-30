@@ -1,5 +1,8 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 ' Timeout extendido para permitir que los hashes legacy (50000 iter) puedan verificarse
 ' y migrarse en el primer login. Eliminar una vez que todos los usuarios hayan hecho
 ' su primer login con el nuevo servidor (o cuando los hashes DB se restablezcan a 200 iter).
@@ -17,17 +20,17 @@ ipCliente = Request.ServerVariables("REMOTE_ADDR")
 ' a su propio umbral de bloqueo. Se comprueba antes que nada, incluso antes del CSRF, para
 ' frenar cuanto antes una peticion que viene de una IP ya penalizada.
 If Not PermiteIntentoLoginIP(ipCliente) Then
-    Response.Redirect "/modules/login/login.asp?error=" & Server.URLEncode("Demasiados intentos desde esta conexion. Espere unos minutos e intentelo de nuevo.")
+    Response.Redirect "/modules/login/login.asp?error=" & Server.URLEncode("Demasiados intentos desde esta conexión. Espere unos minutos e inténtelo de nuevo.")
     Response.End
 End If
 
 If Not TokenCsrfValido(csrfRecibido) Then
-    Response.Redirect "/modules/login/login.asp?error=" & Server.URLEncode("La sesion del formulario ha expirado, intentelo de nuevo.")
+    Response.Redirect "/modules/login/login.asp?error=" & Server.URLEncode("La sesión del formulario ha expirado, inténtelo de nuevo.")
     Response.End
 End If
 
 If Not EsCadenaNoVacia(codUsuario) Or Not EsCadenaNoVacia(password) Then
-    Response.Redirect "/modules/login/login.asp?error=" & Server.URLEncode("Usuario o contrasena incorrectos.")
+    Response.Redirect "/modules/login/login.asp?error=" & Server.URLEncode("Usuario o contraseña incorrectos.")
     Response.End
 End If
 

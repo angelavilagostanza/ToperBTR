@@ -1,6 +1,9 @@
+<%@ CODEPAGE=65001 LANGUAGE="VBScript" %>
 <!--#include virtual="/include/bootstrap.asp"-->
 <!--#include virtual="/dal/solicitudes_dal.asp"-->
 <%
+Response.CodePage = 65001
+Response.CharSet = "utf-8"
 Dim conn
 Set conn = NuevaConexion()
 Call RequiereAccion(conn, CodigoAccion(conn, "ESCRITURA_SOLICITUDES"))
@@ -39,7 +42,7 @@ For i = 0 To UBound(listaIdsStr)
     listaIdsLng(i) = CLng(rawId)
     If Not EsSolicitudCancelable(conn, listaIdsLng(i)) Then
         conn.Close
-        Call EstablecerMensajeFlash("error", "Una o mas solicitudes ya no pueden cancelarse. Revisa el estado actual y vuelve a intentarlo.")
+        Call EstablecerMensajeFlash("error", "Una o más solicitudes ya no pueden cancelarse. Revisa el estado actual y vuelve a intentarlo.")
         Response.Redirect "/modules/solicitudes/consulta.asp"
         Response.End
     End If
